@@ -27,7 +27,7 @@ export default function ThemeToggle({ isCollapsed = false }: ThemeToggleProps) {
   return (
     <button
       onClick={handleToggle}
-      className={`flex items-center ${isCollapsed ? 'justify-center' : 'gap-3'} px-3 py-2 text-sm font-medium rounded-md text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-600`}
+      className={`flex items-center ${isCollapsed ? 'justify-center' : 'gap-2'} px-3 py-2 text-sm font-medium rounded-md text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-600`}
       aria-label={`Zum ${isDark ? 'hellen' : 'dunklen'} Modus wechseln`}
       title={isCollapsed ? `Zum ${isDark ? 'hellen' : 'dunklen'} Modus wechseln` : undefined}
     >
