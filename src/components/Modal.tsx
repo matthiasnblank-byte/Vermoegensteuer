@@ -48,7 +48,7 @@ export default function Modal({ isOpen, onClose, title, children }: ModalProps) 
                     type="button"
                     onClick={onClose}
                     className="rounded-md p-1 text-gray-400 hover:text-gray-500 dark:hover:text-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-600"
-                    aria-label="Schlie?en"
+                    aria-label="Schließen"
                   >
                     <XMarkIcon className="h-6 w-6" aria-hidden="true" />
                   </button>

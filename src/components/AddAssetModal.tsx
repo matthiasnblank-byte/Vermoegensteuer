@@ -17,7 +17,7 @@ export default function AddAssetModal({ isOpen, onClose, onSave, category }: Add
     identifikator: '',
     menge: 1,
     einheitswert: 0,
-    bewertungsmethode: '? 11 BewG',
+    bewertungsmethode: '§ 11 BewG',
     kursdatum: new Date().toISOString().split('T')[0],
     quelle: '',
   });
@@ -26,7 +26,7 @@ export default function AddAssetModal({ isOpen, onClose, onSave, category }: Add
     e.preventDefault();
     
     if (!formData.bezeichnung || !formData.menge || !formData.einheitswert || !formData.kursdatum) {
-      alert('Bitte f?llen Sie alle Pflichtfelder aus.');
+      alert('Bitte füllen Sie alle Pflichtfelder aus.');
       return;
     }
 
@@ -38,7 +38,7 @@ export default function AddAssetModal({ isOpen, onClose, onSave, category }: Add
       menge: Number(formData.menge),
       einheitswert: Number(formData.einheitswert),
       positionswert: Number(formData.menge) * Number(formData.einheitswert),
-      bewertungsmethode: formData.bewertungsmethode || '? 11 BewG',
+      bewertungsmethode: formData.bewertungsmethode || '§ 11 BewG',
       kursdatum: formData.kursdatum,
       quelle: formData.quelle,
     };
@@ -50,7 +50,7 @@ export default function AddAssetModal({ isOpen, onClose, onSave, category }: Add
       identifikator: '',
       menge: 1,
       einheitswert: 0,
-      bewertungsmethode: '? 11 BewG',
+      bewertungsmethode: '§ 11 BewG',
       kursdatum: new Date().toISOString().split('T')[0],
       quelle: '',
     });
@@ -65,7 +65,7 @@ export default function AddAssetModal({ isOpen, onClose, onSave, category }: Add
   };
 
   return (
-    <Modal isOpen={isOpen} onClose={onClose} title="Neue Position hinzuf?gen">
+    <Modal isOpen={isOpen} onClose={onClose} title="Neue Position hinzufügen">
       <form onSubmit={handleSubmit} className="space-y-4">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div className="md:col-span-2">
@@ -104,8 +104,8 @@ export default function AddAssetModal({ isOpen, onClose, onSave, category }: Add
               onChange={(e) => handleChange('kategorie', e.target.value)}
               className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-blue-600 text-sm"
             >
-              <option value="B?rsennotierte Wertpapiere">B?rsennotierte Wertpapiere</option>
-              <option value="Nicht b?rsennotierte Investmentanteile">Nicht b?rsennotierte Investmentanteile</option>
+              <option value="Börsennotierte Wertpapiere">Börsennotierte Wertpapiere</option>
+              <option value="Nicht börsennotierte Investmentanteile">Nicht börsennotierte Investmentanteile</option>
               <option value="Kapitalforderungen">Kapitalforderungen</option>
               <option value="Sonstige Finanzinstrumente">Sonstige Finanzinstrumente</option>
             </select>
@@ -113,7 +113,7 @@ export default function AddAssetModal({ isOpen, onClose, onSave, category }: Add
 
           <div>
             <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-              St?ckzahl/Menge <span className="text-red-500">*</span>
+              Stückzahl/Menge <span className="text-red-500">*</span>
             </label>
             <input
               type="number"
@@ -172,12 +172,12 @@ export default function AddAssetModal({ isOpen, onClose, onSave, category }: Add
               Bewertungsmethode
             </label>
             <select
-              value={formData.bewertungsmethode || '? 11 BewG'}
+              value={formData.bewertungsmethode || '§ 11 BewG'}
               onChange={(e) => handleChange('bewertungsmethode', e.target.value)}
               className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-blue-600 text-sm"
             >
-              <option value="? 11 BewG">? 11 BewG</option>
-              <option value="? 9 BewG">? 9 BewG (gemeiner Wert)</option>
+              <option value="§ 11 BewG">§ 11 BewG</option>
+              <option value="§ 9 BewG">§ 9 BewG (gemeiner Wert)</option>
             </select>
           </div>
 
@@ -198,7 +198,7 @@ export default function AddAssetModal({ isOpen, onClose, onSave, category }: Add
             Abbrechen
           </Button>
           <Button variant="primary" type="submit">
-            Position hinzuf?gen
+            Position hinzufügen
           </Button>
         </div>
       </form>

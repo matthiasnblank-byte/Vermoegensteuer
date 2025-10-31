@@ -32,7 +32,7 @@ export default function SidebarNav() {
     setIsCollapsed(navService.isCollapsed());
   }, []);
 
-  // Fokus-Trap f?r mobile Navigation
+  // Fokus-Trap für mobile Navigation
   useEffect(() => {
     if (!isMobileOpen) return;
 
@@ -70,7 +70,7 @@ export default function SidebarNav() {
   };
 
   const handleNavLinkClick = () => {
-    // Auf mobilen Ger?ten Navigation nach Klick schlie?en
+    // Auf mobilen Geräten Navigation nach Klick schließen
     if (window.innerWidth < 1024) {
       setIsMobileOpen(false);
     }
@@ -147,7 +147,7 @@ export default function SidebarNav() {
           </h2>
           <button
             onClick={() => setIsMobileOpen(false)}
-            aria-label="Navigation schlie?en"
+            aria-label="Navigation schließen"
             className="p-1.5 rounded-md text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-blue-600 transition-colors"
           >
             <XMarkIcon className="h-5 w-5" aria-hidden="true" />

@@ -150,7 +150,7 @@ export default function StammdatenPage() {
           </div>
           <div>
             <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-              Bewertungsw?hrung <span className="text-red-500">*</span>
+              Bewertungswährung <span className="text-red-500">*</span>
             </label>
             <select
               value={formData.veranlagungsparameter?.bewertungswaehrung || 'EUR'}
@@ -177,7 +177,7 @@ export default function StammdatenPage() {
 
       <section className="space-y-4">
         <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">
-          3. Erkl?rungs- und Nachweisangaben
+          3. Erklärungs- und Nachweisangaben
         </h2>
         <div className="space-y-3">
           <label className="flex items-center gap-3">
@@ -187,7 +187,7 @@ export default function StammdatenPage() {
               onChange={(e) => handleNestedChange('erklarungsangaben', 'vollstaendigkeit', e.target.checked)}
               className="h-4 w-4 text-blue-600 border-gray-300 rounded focus:ring-blue-600"
             />
-            <span className="text-sm text-gray-700 dark:text-gray-300">Vollst?ndigkeitserkl?rung</span>
+            <span className="text-sm text-gray-700 dark:text-gray-300">Vollständigkeitserklärung</span>
           </label>
           <label className="flex items-center gap-3">
             <input
@@ -196,7 +196,7 @@ export default function StammdatenPage() {
               onChange={(e) => handleNestedChange('erklarungsangaben', 'mitwirkungspflichten', e.target.checked)}
               className="h-4 w-4 text-blue-600 border-gray-300 dark:border-gray-600 rounded focus:ring-blue-600"
             />
-            <span className="text-sm text-gray-700 dark:text-gray-300">Mitwirkungspflichten erf?llt</span>
+            <span className="text-sm text-gray-700 dark:text-gray-300">Mitwirkungspflichten erfüllt</span>
           </label>
           <label className="flex items-center gap-3">
             <input
@@ -211,11 +211,11 @@ export default function StammdatenPage() {
         <div className="mt-4 space-y-2">
           <div>
             <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-              Identit?tsnachweis
+              Identitätsnachweis
             </label>
             <Button variant="secondary" onClick={() => {}}>
               <ArrowUpTrayIcon className="h-4 w-4" aria-hidden="true" />
-              Datei ausw?hlen
+              Datei auswählen
             </Button>
           </div>
           <div>
@@ -224,7 +224,7 @@ export default function StammdatenPage() {
             </label>
             <Button variant="secondary" onClick={() => {}}>
               <ArrowUpTrayIcon className="h-4 w-4" aria-hidden="true" />
-              Datei ausw?hlen
+              Datei auswählen
             </Button>
           </div>
         </div>

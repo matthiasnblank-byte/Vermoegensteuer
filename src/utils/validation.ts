@@ -1,16 +1,16 @@
 /**
- * Validierungs-Hilfsfunktionen mit vollst?ndiger Unicode-Unterst?tzung
- * f?r deutsche Umlaute (?, ?, ?, ?, ?, ?, ?) und andere diakritische Zeichen
+ * Validierungs-Hilfsfunktionen mit vollständiger Unicode-Unterstützung
+ * für deutsche Umlaute (?, ?, ?, ?, ?, ?, ?) und andere diakritische Zeichen
  */
 
 /**
- * Regex-Pattern f?r Text-Eingaben, die Umlaute erlauben
- * Erlaubt: Buchstaben (alle Skripte), Ziffern, Leerzeichen, Bindestriche, Punkte, Kommas, Apostroph, Klammern, Schr?gstriche
+ * Regex-Pattern für Text-Eingaben, die Umlaute erlauben
+ * Erlaubt: Buchstaben (alle Skripte), Ziffern, Leerzeichen, Bindestriche, Punkte, Kommas, Apostroph, Klammern, Schrägstriche
  */
 export const TEXT_PATTERN = /^[\p{L}\p{N}\p{Zs}\-.,'()\/]+$/u;
 
 /**
- * Regex-Pattern f?r Namen (strenger)
+ * Regex-Pattern für Namen (strenger)
  * Erlaubt: Buchstaben, Leerzeichen, Bindestriche, Apostroph
  */
 export const NAME_PATTERN = /^[\p{L}\p{Zs}\-']+$/u;
@@ -24,7 +24,7 @@ export function normalizeString(str: string): string {
 }
 
 /**
- * Validiert einen Text-String (unterst?tzt Umlaute)
+ * Validiert einen Text-String (unterstützt Umlaute)
  */
 export function validateText(text: string): boolean {
   if (!text || text.trim().length === 0) return false;
@@ -32,7 +32,7 @@ export function validateText(text: string): boolean {
 }
 
 /**
- * Validiert einen Namen (unterst?tzt Umlaute)
+ * Validiert einen Namen (unterstützt Umlaute)
  */
 export function validateName(name: string): boolean {
   if (!name || name.trim().length === 0) return false;
@@ -40,7 +40,7 @@ export function validateName(name: string): boolean {
 }
 
 /**
- * Bereinigt einen String f?r die Speicherung (normalisiert zu NFC)
+ * Bereinigt einen String für die Speicherung (normalisiert zu NFC)
  */
 export function sanitizeForStorage(text: string): string {
   return normalizeString(text.trim());
@@ -50,14 +50,14 @@ export function sanitizeForStorage(text: string): string {
  * Beispiel-Testdaten mit Umlauten
  */
 export const UMLAUT_TEST_DATA = [
-  'M?ller',
-  'J?rg',
-  'Gr??e',
-  'Schr?der',
-  'Fu?',
-  '?rztin',
-  '?konom',
-  '?berweisung',
-  'M?ller & Schr?der GmbH',
-  'J?rg M?ller ? ?berweisung',
+  'Müller',
+  'Jörg',
+  'Größe',
+  'Schröder',
+  'Fuß',
+  'Ärztin',
+  'Ökonom',
+  'Überweisung',
+  'Müller & Schröder GmbH',
+  'Jörg Müller – Überweisung',
 ] as const;

@@ -87,10 +87,10 @@ class StorageService {
     if (!this.getCase()) {
       this.saveCase({
         id: 'case-1',
-        organisation: 'M?ller & Schr?der GmbH',
+        organisation: 'Müller & Schröder GmbH',
         bereich: 'Steuerberatung',
         steuerpflichtigePerson: {
-          name: 'J?rg M?ller',
+          name: 'Jörg Müller',
           geburtsdatum: '1970-01-15',
           steuerId: '12345678901',
         },
@@ -113,13 +113,13 @@ class StorageService {
       this.saveAssets([
         {
           id: 'asset-1',
-          kategorie: 'B?rsennotierte Wertpapiere',
+          kategorie: 'Börsennotierte Wertpapiere',
           identifikator: 'DE0005140008',
           bezeichnung: 'Daimler AG',
           menge: 100,
           einheitswert: 75.50,
           positionswert: 7550,
-          bewertungsmethode: '? 11 BewG',
+          bewertungsmethode: '§ 11 BewG',
           kursdatum: '2024-12-31',
           quelle: 'Xetra',
         },
