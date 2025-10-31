@@ -8,6 +8,7 @@ import {
   XMarkIcon
 } from '@heroicons/react/24/outline';
 import { navService } from '../services/navService';
+import ThemeToggle from './ThemeToggle';
 
 interface NavItem {
   name: string;
@@ -195,6 +196,7 @@ export default function SidebarNav() {
             </h2>
           )}
           <nav className="space-y-1" aria-label="Verwaltung">
+            <ThemeToggle isCollapsed={isCollapsed} />
             <NavLink
               to="/einstellungen"
               onClick={handleNavLinkClick}
