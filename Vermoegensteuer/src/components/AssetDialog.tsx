@@ -43,7 +43,7 @@ export default function AssetDialog({ isOpen, onClose, onSave, asset, kategorie 
     }
   }, [asset, kategorie, isOpen]);
 
-  const handleChange = (field: keyof AssetPosition, value: any) => {
+  const handleChange = (field: keyof AssetPosition, value: string | number) => {
     setFormData((prev) => {
       const updated = { ...prev, [field]: value };
       

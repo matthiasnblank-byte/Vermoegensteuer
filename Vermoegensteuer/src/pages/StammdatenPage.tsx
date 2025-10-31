@@ -14,7 +14,7 @@ export default function StammdatenPage() {
     setFormData(data || {});
   }, []);
 
-  const handleNestedChange = (section: string, field: string, value: any) => {
+  const handleNestedChange = (section: string, field: string, value: string | boolean) => {
     setFormData((prev) => ({
       ...prev,
       [section]: {
