@@ -18,6 +18,8 @@ jobs:
     steps:
       - name: Code auschecken
         uses: actions/checkout@v4
+        with:
+          submodules: recursive
       
       - name: Node.js ${{ matrix.node-version }} einrichten
         uses: actions/setup-node@v4
@@ -58,6 +60,8 @@ jobs:
     steps:
       - name: Code auschecken
         uses: actions/checkout@v4
+        with:
+          submodules: recursive
       
       - name: Node.js einrichten
         uses: actions/setup-node@v4
