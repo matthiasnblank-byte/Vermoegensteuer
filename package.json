@@ -1,7 +1,7 @@
 {
   "name": "b2b-dashboard",
   "version": "1.0.0",
-  "description": "B2B Dashboard f?r Stammdaten und Finanzanlagen",
+  "description": "B2B Dashboard für Stammdaten und Finanzanlagen",
   "type": "module",
   "scripts": {
     "dev": "vite",

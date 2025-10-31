@@ -23,7 +23,7 @@ export default function AddSchuldModal({ isOpen, onClose, onSave }: AddSchuldMod
     e.preventDefault();
     
     if (!formData.glaeubiger || !formData.rechtsgrund || !formData.nennbetrag) {
-      alert('Bitte f?llen Sie alle Pflichtfelder aus.');
+      alert('Bitte füllen Sie alle Pflichtfelder aus.');
       return;
     }
 
@@ -57,12 +57,12 @@ export default function AddSchuldModal({ isOpen, onClose, onSave }: AddSchuldMod
   };
 
   return (
-    <Modal isOpen={isOpen} onClose={onClose} title="Neue Schuld hinzuf?gen">
+    <Modal isOpen={isOpen} onClose={onClose} title="Neue Schuld hinzufügen">
       <form onSubmit={handleSubmit} className="space-y-4">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
             <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-              Gl?ubiger <span className="text-red-500">*</span>
+              Gläubiger <span className="text-red-500">*</span>
             </label>
             <input
               type="text"
@@ -105,7 +105,7 @@ export default function AddSchuldModal({ isOpen, onClose, onSave }: AddSchuldMod
 
           <div>
             <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-              F?lligkeit
+              Fälligkeit
             </label>
             <input
               type="date"
@@ -158,7 +158,7 @@ export default function AddSchuldModal({ isOpen, onClose, onSave }: AddSchuldMod
             Abbrechen
           </Button>
           <Button variant="primary" type="submit">
-            Schuld hinzuf?gen
+            Schuld hinzufügen
           </Button>
         </div>
       </form>

@@ -12,7 +12,7 @@ export default function FinanzanlagenPage() {
   const [schulden, setSchulden] = useState<SchuldPosition[]>([]);
   const [isAssetModalOpen, setIsAssetModalOpen] = useState(false);
   const [isSchuldModalOpen, setIsSchuldModalOpen] = useState(false);
-  const [selectedCategory, setSelectedCategory] = useState('B?rsennotierte Wertpapiere');
+  const [selectedCategory, setSelectedCategory] = useState('Börsennotierte Wertpapiere');
 
   useEffect(() => {
     storageService.initMockData();
@@ -32,7 +32,7 @@ export default function FinanzanlagenPage() {
     setSchulden(updated);
   };
 
-  const openAssetModal = (category: string = 'B?rsennotierte Wertpapiere') => {
+  const openAssetModal = (category: string = 'Börsennotierte Wertpapiere') => {
     setSelectedCategory(category);
     setIsAssetModalOpen(true);
   };
@@ -40,10 +40,10 @@ export default function FinanzanlagenPage() {
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
-        <h1 className="text-2xl font-semibold text-gray-900 dark:text-gray-100">Finanzanlagen & Verm?gen</h1>
+        <h1 className="text-2xl font-semibold text-gray-900 dark:text-gray-100">Finanzanlagen & Vermögen</h1>
         <Button variant="primary" onClick={() => openAssetModal()}>
           <PlusIcon className="h-4 w-4" aria-hidden="true" />
-          Position hinzuf?gen
+          Position hinzufügen
         </Button>
       </div>
 
@@ -63,8 +63,8 @@ export default function FinanzanlagenPage() {
       <Tabs
         items={[
           {
-            label: 'B?rsennotierte Wertpapiere',
-            badge: assets.filter((a) => a.kategorie === 'B?rsennotierte Wertpapiere').length,
+            label: 'Börsennotierte Wertpapiere',
+            badge: assets.filter((a) => a.kategorie === 'Börsennotierte Wertpapiere').length,
             content: (
               <div className="space-y-4">
                 <SearchBar
@@ -72,15 +72,15 @@ export default function FinanzanlagenPage() {
                   onDateFilter={() => {}}
                 />
                 <AssetCategoryContent
-                  category="B?rsennotierte Wertpapiere"
-                  assets={assets.filter((a) => a.kategorie === 'B?rsennotierte Wertpapiere')}
+                  category="Börsennotierte Wertpapiere"
+                  assets={assets.filter((a) => a.kategorie === 'Börsennotierte Wertpapiere')}
                 />
               </div>
             ),
           },
           {
             label: 'Fonds / Investmentanteile',
-            badge: assets.filter((a) => a.kategorie === 'Nicht b?rsennotierte Investmentanteile').length,
+            badge: assets.filter((a) => a.kategorie === 'Nicht börsennotierte Investmentanteile').length,
             content: (
               <div className="space-y-4">
                 <SearchBar
@@ -88,8 +88,8 @@ export default function FinanzanlagenPage() {
                   onDateFilter={() => {}}
                 />
                 <AssetCategoryContent
-                  category="Nicht b?rsennotierte Investmentanteile"
-                  assets={assets.filter((a) => a.kategorie === 'Nicht b?rsennotierte Investmentanteile')}
+                  category="Nicht börsennotierte Investmentanteile"
+                  assets={assets.filter((a) => a.kategorie === 'Nicht börsennotierte Investmentanteile')}
                 />
               </div>
             ),
@@ -138,7 +138,7 @@ export default function FinanzanlagenPage() {
                   />
                   <Button variant="primary" onClick={() => setIsSchuldModalOpen(true)}>
                     <PlusIcon className="h-4 w-4" aria-hidden="true" />
-                    Schuld hinzuf?gen
+                    Schuld hinzufügen
                   </Button>
                 </div>
                 <SchuldenContent schulden={schulden} />
@@ -152,7 +152,7 @@ export default function FinanzanlagenPage() {
         <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">Summenspiegel</h2>
         <div className="grid grid-cols-3 gap-4">
           <div>
-            <div className="text-sm text-gray-500 dark:text-gray-400 mb-1">Verm?gen brutto</div>
+            <div className="text-sm text-gray-500 dark:text-gray-400 mb-1">Vermögen brutto</div>
             <div className="text-2xl font-semibold text-gray-900 dark:text-gray-100">
               {new Intl.NumberFormat('de-DE', { style: 'currency', currency: 'EUR' }).format(
                 assets.reduce((sum, a) => sum + a.positionswert, 0)
@@ -168,7 +168,7 @@ export default function FinanzanlagenPage() {
             </div>
           </div>
           <div>
-            <div className="text-sm text-gray-500 dark:text-gray-400 mb-1">Verm?gen netto</div>
+            <div className="text-sm text-gray-500 dark:text-gray-400 mb-1">Vermögen netto</div>
             <div className="text-2xl font-semibold text-gray-900 dark:text-gray-100">
               {new Intl.NumberFormat('de-DE', { style: 'currency', currency: 'EUR' }).format(
                 assets.reduce((sum, a) => sum + a.positionswert, 0) -
@@ -194,7 +194,7 @@ function AssetCategoryContent({ category, assets }: AssetCategoryContentProps) {
         <p className="text-gray-500 dark:text-gray-400">Keine Positionen vorhanden</p>
         <Button variant="primary" onClick={() => {}} className="mt-4">
           <PlusIcon className="h-4 w-4" aria-hidden="true" />
-          Erste Position hinzuf?gen
+          Erste Position hinzufügen
         </Button>
       </div>
     );
@@ -204,7 +204,7 @@ function AssetCategoryContent({ category, assets }: AssetCategoryContentProps) {
     <div className="space-y-4">
       <div className="flex items-center justify-between">
         <p className="text-sm text-gray-500 dark:text-gray-400">
-          {category} ? Bewertungsregel: ? 11 BewG bzw. ? 9 BewG (gemeiner Wert)
+          {category} ? Bewertungsregel: § 11 BewG bzw. § 9 BewG (gemeiner Wert)
         </p>
       </div>
       <div className="overflow-hidden">
@@ -213,7 +213,7 @@ function AssetCategoryContent({ category, assets }: AssetCategoryContentProps) {
             <tr>
               <th className="px-4 py-3 text-left text-xs font-semibold text-gray-900 dark:text-gray-100 uppercase">ISIN/WKN</th>
               <th className="px-4 py-3 text-left text-xs font-semibold text-gray-900 dark:text-gray-100 uppercase">Bezeichnung</th>
-              <th className="px-4 py-3 text-left text-xs font-semibold text-gray-900 dark:text-gray-100 uppercase">St?ckzahl</th>
+              <th className="px-4 py-3 text-left text-xs font-semibold text-gray-900 dark:text-gray-100 uppercase">Stückzahl</th>
               <th className="px-4 py-3 text-left text-xs font-semibold text-gray-900 dark:text-gray-100 uppercase">Einheitswert</th>
               <th className="px-4 py-3 text-left text-xs font-semibold text-gray-900 dark:text-gray-100 uppercase">Positionswert</th>
               <th className="px-4 py-3 text-left text-xs font-semibold text-gray-900 dark:text-gray-100 uppercase">Kursdatum</th>
@@ -276,17 +276,17 @@ function SchuldenContent({ schulden }: SchuldenContentProps) {
     <div className="space-y-4">
       <div className="flex items-center justify-between">
         <p className="text-sm text-gray-500 dark:text-gray-400">
-          Schulden ? Bewertungsregel: ? 12 Abs. 1 BewG (Nennwert)
+          Schulden – Bewertungsregel: § 12 Abs. 1 BewG (Nennwert)
         </p>
       </div>
       <div className="overflow-hidden">
         <table className="min-w-full divide-y divide-gray-300 dark:divide-gray-700">
           <thead className="bg-gray-50 dark:bg-gray-800">
             <tr>
-              <th className="px-4 py-3 text-left text-xs font-semibold text-gray-900 dark:text-gray-100 uppercase">Gl?ubiger</th>
+              <th className="px-4 py-3 text-left text-xs font-semibold text-gray-900 dark:text-gray-100 uppercase">Gläubiger</th>
               <th className="px-4 py-3 text-left text-xs font-semibold text-gray-900 dark:text-gray-100 uppercase">Rechtsgrund</th>
               <th className="px-4 py-3 text-left text-xs font-semibold text-gray-900 dark:text-gray-100 uppercase">Nennbetrag</th>
-              <th className="px-4 py-3 text-left text-xs font-semibold text-gray-900 dark:text-gray-100 uppercase">F?lligkeit</th>
+              <th className="px-4 py-3 text-left text-xs font-semibold text-gray-900 dark:text-gray-100 uppercase">Fälligkeit</th>
               <th className="px-4 py-3 text-left text-xs font-semibold text-gray-900 dark:text-gray-100 uppercase">Zinssatz</th>
               <th className="px-4 py-3 text-left text-xs font-semibold text-gray-900 dark:text-gray-100 uppercase">Aktionen</th>
             </tr>

@@ -12,7 +12,7 @@ class ThemeService {
   init(): void {
     this.applyTheme();
     
-    // Listener f?r Systempr?ferenz-?nderungen
+    // Listener für Systempr?ferenz-Änderungen
     if (typeof window !== 'undefined') {
       this.mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
       this.mediaQuery.addEventListener('change', this.handleSystemPreferenceChange);
@@ -37,7 +37,7 @@ class ThemeService {
   };
 
   /**
-   * Liest die gespeicherte Theme-Pr?ferenz aus localStorage
+   * Liest die gespeicherte Theme-Präferenz aus localStorage
    */
   getPreference(): ThemePreference {
     if (typeof window === 'undefined') return 'system';
@@ -49,7 +49,7 @@ class ThemeService {
   }
 
   /**
-   * Setzt die Theme-Pr?ferenz und speichert sie
+   * Setzt die Theme-Präferenz und speichert sie
    */
   setPreference(preference: ThemePreference): void {
     if (typeof window === 'undefined') return;
@@ -59,7 +59,7 @@ class ThemeService {
   }
 
   /**
-   * Wendet das aktuelle Theme basierend auf Pr?ferenz und Systemeinstellung an
+   * Wendet das aktuelle Theme basierend auf Präferenz und Systemeinstellung an
    */
   applyTheme(): void {
     if (typeof document === 'undefined') return;
@@ -83,7 +83,7 @@ class ThemeService {
   }
 
   /**
-   * F?gt einen Listener hinzu, der bei Theme-?nderungen aufgerufen wird
+   * Fügt einen Listener hinzu, der bei Theme-Änderungen aufgerufen wird
    */
   addListener(callback: () => void): () => void {
     this.listeners.push(callback);
@@ -97,7 +97,7 @@ class ThemeService {
   }
 
   /**
-   * Gibt das aktuell aktive Theme zur?ck (light oder dark)
+   * Gibt das aktuell aktive Theme zurück (light oder dark)
    */
   getActiveTheme(): 'light' | 'dark' {
     if (typeof document === 'undefined') return 'light';
