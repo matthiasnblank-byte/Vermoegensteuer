@@ -2,6 +2,7 @@ import { ReactNode } from 'react';
 import { useLocation } from 'react-router-dom';
 import SidebarNav from './SidebarNav';
 import Breadcrumbs from './Breadcrumbs';
+import ThemeToggle from './ThemeToggle';
 import { storageService } from '../services/storageService';
 
 interface AppShellProps {
@@ -38,7 +39,10 @@ export default function AppShell({ children }: AppShellProps) {
       <SidebarNav />
       <div className="flex-1 flex flex-col overflow-hidden lg:ml-0">
         <header className="bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-700 px-6 py-4">
-          <Breadcrumbs items={getBreadcrumbs()} />
+          <div className="flex items-center justify-between">
+            <Breadcrumbs items={getBreadcrumbs()} />
+            <ThemeToggle />
+          </div>
         </header>
         <main className="flex-1 overflow-y-auto px-6 py-4 bg-gray-50 dark:bg-gray-900">
           {children}

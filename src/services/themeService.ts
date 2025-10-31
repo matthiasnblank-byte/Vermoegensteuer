@@ -74,7 +74,12 @@ class ThemeService {
       theme = pref;
     }
 
-    document.documentElement.setAttribute('data-theme', theme);
+    // Tailwind CSS Dark Mode: Klasse auf html-Element setzen
+    if (theme === 'dark') {
+      document.documentElement.classList.add('dark');
+    } else {
+      document.documentElement.classList.remove('dark');
+    }
   }
 
   /**
