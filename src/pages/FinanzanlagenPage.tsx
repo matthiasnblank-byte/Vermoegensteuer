@@ -1,0 +1,290 @@
+import { useState, useEffect } from 'react';
+import { AssetPosition, SchuldPosition, storageService } from '../services/storageService';
+import Tabs from '../components/Tabs';
+import SearchBar from '../components/SearchBar';
+import Button from '../components/Button';
+import { PlusIcon, ArrowUpTrayIcon } from '@heroicons/react/24/outline';
+
+export default function FinanzanlagenPage() {
+  const [assets, setAssets] = useState<AssetPosition[]>([]);
+  const [schulden, setSchulden] = useState<SchuldPosition[]>([]);
+
+  useEffect(() => {
+    storageService.initMockData();
+    setAssets(storageService.getAssets());
+    setSchulden(storageService.getSchulden());
+  }, []);
+
+  const handleAddAsset = () => {
+    const newAsset: AssetPosition = {
+      id: `asset-${Date.now()}`,
+      kategorie: 'B?rsennotierte Wertpapiere',
+      bezeichnung: 'Neue Position',
+      menge: 1,
+      einheitswert: 0,
+      positionswert: 0,
+      bewertungsmethode: '? 11 BewG',
+      kursdatum: new Date().toISOString().split('T')[0],
+    };
+    const updated = [...assets, newAsset];
+    storageService.saveAssets(updated);
+    setAssets(updated);
+  };
+
+  return (
+    <div className="space-y-6">
+      <div className="flex items-center justify-between">
+        <h1 className="text-2xl font-semibold text-gray-900">Finanzanlagen & Verm?gen</h1>
+        <Button variant="primary" onClick={handleAddAsset}>
+          <PlusIcon className="h-4 w-4" aria-hidden="true" />
+          Position hinzuf?gen
+        </Button>
+      </div>
+
+      <Tabs
+        items={[
+          {
+            label: 'B?rsennotierte Wertpapiere',
+            badge: assets.filter((a) => a.kategorie === 'B?rsennotierte Wertpapiere').length,
+            content: (
+              <div className="space-y-4">
+                <SearchBar
+                  onSearch={() => {}}
+                  onDateFilter={() => {}}
+                />
+                <AssetCategoryContent
+                  category="B?rsennotierte Wertpapiere"
+                  assets={assets.filter((a) => a.kategorie === 'B?rsennotierte Wertpapiere')}
+                />
+              </div>
+            ),
+          },
+          {
+            label: 'Fonds / Investmentanteile',
+            badge: assets.filter((a) => a.kategorie === 'Nicht b?rsennotierte Investmentanteile').length,
+            content: (
+              <div className="space-y-4">
+                <SearchBar
+                  onSearch={() => {}}
+                  onDateFilter={() => {}}
+                />
+                <AssetCategoryContent
+                  category="Nicht b?rsennotierte Investmentanteile"
+                  assets={assets.filter((a) => a.kategorie === 'Nicht b?rsennotierte Investmentanteile')}
+                />
+              </div>
+            ),
+          },
+          {
+            label: 'Bankguthaben & Forderungen',
+            badge: assets.filter((a) => a.kategorie === 'Kapitalforderungen').length,
+            content: (
+              <div className="space-y-4">
+                <SearchBar
+                  onSearch={() => {}}
+                  onDateFilter={() => {}}
+                />
+                <AssetCategoryContent
+                  category="Kapitalforderungen"
+                  assets={assets.filter((a) => a.kategorie === 'Kapitalforderungen')}
+                />
+              </div>
+            ),
+          },
+          {
+            label: 'Sonstige / Krypto',
+            badge: assets.filter((a) => a.kategorie === 'Sonstige Finanzinstrumente').length,
+            content: (
+              <div className="space-y-4">
+                <SearchBar
+                  onSearch={() => {}}
+                  onDateFilter={() => {}}
+                />
+                <AssetCategoryContent
+                  category="Sonstige Finanzinstrumente"
+                  assets={assets.filter((a) => a.kategorie === 'Sonstige Finanzinstrumente')}
+                />
+              </div>
+            ),
+          },
+          {
+            label: 'Schulden',
+            badge: schulden.length,
+            content: (
+              <div className="space-y-4">
+                <SearchBar
+                  onSearch={() => {}}
+                  onDateFilter={() => {}}
+                />
+                <SchuldenContent schulden={schulden} />
+              </div>
+            ),
+          },
+        ]}
+      />
+
+      <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+        <h2 className="text-lg font-semibold text-gray-900 mb-4">Summenspiegel</h2>
+        <div className="grid grid-cols-3 gap-4">
+          <div>
+            <div className="text-sm text-gray-500 mb-1">Verm?gen brutto</div>
+            <div className="text-2xl font-semibold text-gray-900">
+              {new Intl.NumberFormat('de-DE', { style: 'currency', currency: 'EUR' }).format(
+                assets.reduce((sum, a) => sum + a.positionswert, 0)
+              )}
+            </div>
+          </div>
+          <div>
+            <div className="text-sm text-gray-500 mb-1">Schulden</div>
+            <div className="text-2xl font-semibold text-gray-900">
+              {new Intl.NumberFormat('de-DE', { style: 'currency', currency: 'EUR' }).format(
+                schulden.reduce((sum, s) => sum + s.nennbetrag, 0)
+              )}
+            </div>
+          </div>
+          <div>
+            <div className="text-sm text-gray-500 mb-1">Verm?gen netto</div>
+            <div className="text-2xl font-semibold text-gray-900">
+              {new Intl.NumberFormat('de-DE', { style: 'currency', currency: 'EUR' }).format(
+                assets.reduce((sum, a) => sum + a.positionswert, 0) -
+                schulden.reduce((sum, s) => sum + s.nennbetrag, 0)
+              )}
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+interface AssetCategoryContentProps {
+  category: string;
+  assets: AssetPosition[];
+}
+
+function AssetCategoryContent({ category, assets }: AssetCategoryContentProps) {
+  if (assets.length === 0) {
+    return (
+      <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-8 text-center">
+        <p className="text-gray-500">Keine Positionen vorhanden</p>
+        <Button variant="primary" onClick={() => {}} className="mt-4">
+          <PlusIcon className="h-4 w-4" aria-hidden="true" />
+          Erste Position hinzuf?gen
+        </Button>
+      </div>
+    );
+  }
+
+  return (
+    <div className="space-y-4">
+      <div className="flex items-center justify-between">
+        <p className="text-sm text-gray-500">
+          {category} ? Bewertungsregel: ? 11 BewG bzw. ? 9 BewG (gemeiner Wert)
+        </p>
+      </div>
+      <div className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
+        <table className="min-w-full divide-y divide-gray-300">
+          <thead className="bg-gray-50">
+            <tr>
+              <th className="px-4 py-3 text-left text-xs font-semibold text-gray-900 uppercase">ISIN/WKN</th>
+              <th className="px-4 py-3 text-left text-xs font-semibold text-gray-900 uppercase">Bezeichnung</th>
+              <th className="px-4 py-3 text-left text-xs font-semibold text-gray-900 uppercase">St?ckzahl</th>
+              <th className="px-4 py-3 text-left text-xs font-semibold text-gray-900 uppercase">Einheitswert</th>
+              <th className="px-4 py-3 text-left text-xs font-semibold text-gray-900 uppercase">Positionswert</th>
+              <th className="px-4 py-3 text-left text-xs font-semibold text-gray-900 uppercase">Kursdatum</th>
+              <th className="px-4 py-3 text-left text-xs font-semibold text-gray-900 uppercase">Quelle</th>
+              <th className="px-4 py-3 text-left text-xs font-semibold text-gray-900 uppercase">Aktionen</th>
+            </tr>
+          </thead>
+          <tbody className="bg-white divide-y divide-gray-200">
+            {assets.map((asset) => (
+              <tr key={asset.id} className="hover:bg-gray-50">
+                <td className="px-4 py-3 text-sm text-gray-900">{asset.identifikator || '-'}</td>
+                <td className="px-4 py-3 text-sm font-medium text-gray-900">{asset.bezeichnung}</td>
+                <td className="px-4 py-3 text-sm text-gray-900">{asset.menge}</td>
+                <td className="px-4 py-3 text-sm text-gray-900">
+                  {new Intl.NumberFormat('de-DE', { style: 'currency', currency: 'EUR' }).format(asset.einheitswert)}
+                </td>
+                <td className="px-4 py-3 text-sm font-semibold text-gray-900">
+                  {new Intl.NumberFormat('de-DE', { style: 'currency', currency: 'EUR' }).format(asset.positionswert)}
+                </td>
+                <td className="px-4 py-3 text-sm text-gray-500">
+                  {new Date(asset.kursdatum).toLocaleDateString('de-DE')}
+                </td>
+                <td className="px-4 py-3 text-sm text-gray-500">{asset.quelle || '-'}</td>
+                <td className="px-4 py-3">
+                  <div className="flex items-center gap-2">
+                    <Button variant="secondary" onClick={() => {}} className="text-xs py-1 px-2">
+                      Bearbeiten
+                    </Button>
+                    <Button variant="secondary" onClick={() => {}} className="text-xs py-1 px-2">
+                      <ArrowUpTrayIcon className="h-3 w-3" aria-hidden="true" />
+                    </Button>
+                  </div>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  );
+}
+
+interface SchuldenContentProps {
+  schulden: SchuldPosition[];
+}
+
+function SchuldenContent({ schulden }: SchuldenContentProps) {
+  if (schulden.length === 0) {
+    return (
+      <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-8 text-center">
+        <p className="text-gray-500">Keine Schulden erfasst</p>
+      </div>
+    );
+  }
+
+  return (
+    <div className="space-y-4">
+      <div className="flex items-center justify-between">
+        <p className="text-sm text-gray-500">
+          Schulden ? Bewertungsregel: ? 12 Abs. 1 BewG (Nennwert)
+        </p>
+      </div>
+      <div className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
+        <table className="min-w-full divide-y divide-gray-300">
+          <thead className="bg-gray-50">
+            <tr>
+              <th className="px-4 py-3 text-left text-xs font-semibold text-gray-900 uppercase">Gl?ubiger</th>
+              <th className="px-4 py-3 text-left text-xs font-semibold text-gray-900 uppercase">Rechtsgrund</th>
+              <th className="px-4 py-3 text-left text-xs font-semibold text-gray-900 uppercase">Nennbetrag</th>
+              <th className="px-4 py-3 text-left text-xs font-semibold text-gray-900 uppercase">F?lligkeit</th>
+              <th className="px-4 py-3 text-left text-xs font-semibold text-gray-900 uppercase">Zinssatz</th>
+              <th className="px-4 py-3 text-left text-xs font-semibold text-gray-900 uppercase">Aktionen</th>
+            </tr>
+          </thead>
+          <tbody className="bg-white divide-y divide-gray-200">
+            {schulden.map((schuld) => (
+              <tr key={schuld.id} className="hover:bg-gray-50">
+                <td className="px-4 py-3 text-sm text-gray-900">{schuld.glaeubiger}</td>
+                <td className="px-4 py-3 text-sm text-gray-500">{schuld.rechtsgrund}</td>
+                <td className="px-4 py-3 text-sm font-semibold text-gray-900">
+                  {new Intl.NumberFormat('de-DE', { style: 'currency', currency: 'EUR' }).format(schuld.nennbetrag)}
+                </td>
+                <td className="px-4 py-3 text-sm text-gray-500">
+                  {schuld.faelligkeit ? new Date(schuld.faelligkeit).toLocaleDateString('de-DE') : '-'}
+                </td>
+                <td className="px-4 py-3 text-sm text-gray-500">{schuld.zinssatz ? `${schuld.zinssatz}%` : '-'}</td>
+                <td className="px-4 py-3">
+                  <Button variant="secondary" onClick={() => {}} className="text-xs py-1 px-2">
+                    Bearbeiten
+                  </Button>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  );
+}
