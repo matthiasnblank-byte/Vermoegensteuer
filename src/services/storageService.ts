@@ -87,10 +87,10 @@ class StorageService {
     if (!this.getCase()) {
       this.saveCase({
         id: 'case-1',
-        organisation: 'Musterfirma GmbH',
+        organisation: 'M?ller & Schr?der GmbH',
         bereich: 'Steuerberatung',
         steuerpflichtigePerson: {
-          name: 'Max Mustermann',
+          name: 'J?rg M?ller',
           geburtsdatum: '1970-01-15',
           steuerId: '12345678901',
         },

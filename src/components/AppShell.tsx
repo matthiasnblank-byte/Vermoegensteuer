@@ -2,7 +2,6 @@ import { ReactNode } from 'react';
 import { useLocation } from 'react-router-dom';
 import SidebarNav from './SidebarNav';
 import Breadcrumbs from './Breadcrumbs';
-import HeaderCards from './HeaderCards';
 import { storageService } from '../services/storageService';
 
 interface AppShellProps {
@@ -14,9 +13,6 @@ export default function AppShell({ children }: AppShellProps) {
   const caseData = storageService.getCase();
 
   const getBreadcrumbs = () => {
-    if (location.pathname === '/') {
-      return ['Dashboard'];
-    }
     if (location.pathname === '/stammdaten') {
       return [
         caseData?.organisation || 'Organisation',
@@ -31,20 +27,20 @@ export default function AppShell({ children }: AppShellProps) {
         'Finanzanlagen',
       ];
     }
-    return ['Dashboard'];
+    if (location.pathname === '/einstellungen') {
+      return ['Einstellungen'];
+    }
+    return [];
   };
 
   return (
-    <div className="flex h-screen bg-gray-50">
+    <div className="flex h-screen bg-gray-50 dark:bg-gray-900">
       <SidebarNav />
-      <div className="flex-1 flex flex-col overflow-hidden">
-        <header className="bg-white border-b border-gray-200 px-6 py-4">
-          <div className="mb-4">
-            <Breadcrumbs items={getBreadcrumbs()} />
-          </div>
-          <HeaderCards />
+      <div className="flex-1 flex flex-col overflow-hidden lg:ml-0">
+        <header className="bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-700 px-6 py-4">
+          <Breadcrumbs items={getBreadcrumbs()} />
         </header>
-        <main className="flex-1 overflow-y-auto px-6 py-4">
+        <main className="flex-1 overflow-y-auto px-6 py-4 bg-gray-50 dark:bg-gray-900">
           {children}
         </main>
       </div>
