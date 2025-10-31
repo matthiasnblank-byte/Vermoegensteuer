@@ -74,6 +74,7 @@ export default function FinanzanlagenPage() {
                 <AssetCategoryContent
                   category="Börsennotierte Wertpapiere"
                   assets={assets.filter((a) => a.kategorie === 'Börsennotierte Wertpapiere')}
+                  onAddClick={() => openAssetModal('Börsennotierte Wertpapiere')}
                 />
               </div>
             ),
@@ -90,6 +91,7 @@ export default function FinanzanlagenPage() {
                 <AssetCategoryContent
                   category="Nicht börsennotierte Investmentanteile"
                   assets={assets.filter((a) => a.kategorie === 'Nicht börsennotierte Investmentanteile')}
+                  onAddClick={() => openAssetModal('Nicht börsennotierte Investmentanteile')}
                 />
               </div>
             ),
@@ -106,6 +108,7 @@ export default function FinanzanlagenPage() {
                 <AssetCategoryContent
                   category="Kapitalforderungen"
                   assets={assets.filter((a) => a.kategorie === 'Kapitalforderungen')}
+                  onAddClick={() => openAssetModal('Kapitalforderungen')}
                 />
               </div>
             ),
@@ -122,6 +125,7 @@ export default function FinanzanlagenPage() {
                 <AssetCategoryContent
                   category="Sonstige Finanzinstrumente"
                   assets={assets.filter((a) => a.kategorie === 'Sonstige Finanzinstrumente')}
+                  onAddClick={() => openAssetModal('Sonstige Finanzinstrumente')}
                 />
               </div>
             ),
@@ -185,14 +189,15 @@ export default function FinanzanlagenPage() {
 interface AssetCategoryContentProps {
   category: string;
   assets: AssetPosition[];
+  onAddClick: () => void;
 }
 
-function AssetCategoryContent({ category, assets }: AssetCategoryContentProps) {
+function AssetCategoryContent({ category, assets, onAddClick }: AssetCategoryContentProps) {
   if (assets.length === 0) {
     return (
       <div className="py-8 text-center">
         <p className="text-gray-500 dark:text-gray-400">Keine Positionen vorhanden</p>
-        <Button variant="primary" onClick={() => {}} className="mt-4">
+        <Button variant="primary" onClick={onAddClick} className="mt-4">
           <PlusIcon className="h-4 w-4" aria-hidden="true" />
           Erste Position hinzufügen
         </Button>
@@ -204,7 +209,7 @@ function AssetCategoryContent({ category, assets }: AssetCategoryContentProps) {
     <div className="space-y-4">
       <div className="flex items-center justify-between">
         <p className="text-sm text-gray-500 dark:text-gray-400">
-          {category} ? Bewertungsregel: § 11 BewG bzw. § 9 BewG (gemeiner Wert)
+          {category} – Bewertungsregel: § 11 BewG bzw. § 9 BewG (gemeiner Wert)
         </p>
       </div>
       <div className="overflow-hidden">
@@ -266,7 +271,7 @@ function SchuldenContent({ schulden }: SchuldenContentProps) {
       <div className="py-8 text-center">
         <p className="text-gray-500 dark:text-gray-400">Keine Schulden erfasst</p>
         <p className="text-sm text-gray-400 dark:text-gray-500 mt-2">
-          Verwenden Sie den Button oben, um eine neue Schuld hinzuzuf?gen.
+          Verwenden Sie den Button oben, um eine neue Schuld hinzuzufügen.
         </p>
       </div>
     );
