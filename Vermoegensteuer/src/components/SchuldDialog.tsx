@@ -36,7 +36,7 @@ export default function SchuldDialog({ isOpen, onClose, onSave, schuld }: Schuld
     }
   }, [schuld, isOpen]);
 
-  const handleChange = (field: keyof SchuldPosition, value: any) => {
+  const handleChange = (field: keyof SchuldPosition, value: string | number | undefined) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
   };
 
