@@ -1,0 +1,84 @@
+name: CI Pipeline
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main, develop ]
+
+jobs:
+  test:
+    name: Tests ausführen
+    runs-on: ubuntu-latest
+    
+    strategy:
+      matrix:
+        node-version: [18.x, 20.x]
+    
+    steps:
+      - name: Code auschecken
+        uses: actions/checkout@v4
+      
+      - name: Node.js ${{ matrix.node-version }} einrichten
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: 'npm'
+          cache-dependency-path: Vermoegensteuer/package-lock.json
+      
+      - name: Dependencies installieren
+        working-directory: ./Vermoegensteuer
+        run: npm ci
+      
+      - name: Linting
+        working-directory: ./Vermoegensteuer
+        run: npm run lint
+      
+      - name: Tests ausführen
+        working-directory: ./Vermoegensteuer
+        run: npm run test:run
+      
+      - name: Build erstellen
+        working-directory: ./Vermoegensteuer
+        run: npm run build
+      
+      - name: Test-Coverage hochladen
+        if: matrix.node-version == '20.x'
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage-report
+          path: Vermoegensteuer/coverage/
+          retention-days: 30
+
+  build-check:
+    name: Build überprüfen
+    runs-on: ubuntu-latest
+    needs: test
+    
+    steps:
+      - name: Code auschecken
+        uses: actions/checkout@v4
+      
+      - name: Node.js einrichten
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20.x'
+          cache: 'npm'
+          cache-dependency-path: Vermoegensteuer/package-lock.json
+      
+      - name: Dependencies installieren
+        working-directory: ./Vermoegensteuer
+        run: npm ci
+      
+      - name: Production Build erstellen
+        working-directory: ./Vermoegensteuer
+        run: npm run build
+      
+      - name: Build-Artefakte hochladen
+        uses: actions/upload-artifact@v4
+        with:
+          name: dist
+          path: Vermoegensteuer/dist/
+          retention-days: 7
+
+
