@@ -147,7 +147,7 @@ export default function AddSchuldModal({ isOpen, onClose, onSave }: AddSchuldMod
           <div className="md:col-span-2">
             <div className="p-4 bg-blue-50 dark:bg-blue-900/30 rounded-md">
               <p className="text-sm text-blue-800 dark:text-blue-200">
-                <strong>Hinweis:</strong> Schulden werden gem. ? 12 Abs. 1 BewG mit dem Nennwert bewertet.
+                <strong>Hinweis:</strong> Schulden werden gem. § 12 Abs. 1 BewG mit dem Nennwert bewertet.
               </p>
             </div>
           </div>
