@@ -3,11 +3,16 @@ import { AssetPosition, SchuldPosition, storageService } from '../services/stora
 import Tabs from '../components/Tabs';
 import SearchBar from '../components/SearchBar';
 import Button from '../components/Button';
+import AddAssetModal from '../components/AddAssetModal';
+import AddSchuldModal from '../components/AddSchuldModal';
 import { PlusIcon, ArrowUpTrayIcon } from '@heroicons/react/24/outline';
 
 export default function FinanzanlagenPage() {
   const [assets, setAssets] = useState<AssetPosition[]>([]);
   const [schulden, setSchulden] = useState<SchuldPosition[]>([]);
+  const [isAssetModalOpen, setIsAssetModalOpen] = useState(false);
+  const [isSchuldModalOpen, setIsSchuldModalOpen] = useState(false);
+  const [selectedCategory, setSelectedCategory] = useState('B?rsennotierte Wertpapiere');
 
   useEffect(() => {
     storageService.initMockData();
@@ -15,31 +20,45 @@ export default function FinanzanlagenPage() {
     setSchulden(storageService.getSchulden());
   }, []);
 
-  const handleAddAsset = () => {
-    const newAsset: AssetPosition = {
-      id: `asset-${Date.now()}`,
-      kategorie: 'B?rsennotierte Wertpapiere',
-      bezeichnung: 'Neue Position',
-      menge: 1,
-      einheitswert: 0,
-      positionswert: 0,
-      bewertungsmethode: '? 11 BewG',
-      kursdatum: new Date().toISOString().split('T')[0],
-    };
-    const updated = [...assets, newAsset];
+  const handleAddAsset = (asset: AssetPosition) => {
+    const updated = [...assets, asset];
     storageService.saveAssets(updated);
     setAssets(updated);
+  };
+
+  const handleAddSchuld = (schuld: SchuldPosition) => {
+    const updated = [...schulden, schuld];
+    storageService.saveSchulden(updated);
+    setSchulden(updated);
+  };
+
+  const openAssetModal = (category: string = 'B?rsennotierte Wertpapiere') => {
+    setSelectedCategory(category);
+    setIsAssetModalOpen(true);
   };
 
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <h1 className="text-2xl font-semibold text-gray-900 dark:text-gray-100">Finanzanlagen & Verm?gen</h1>
-        <Button variant="primary" onClick={handleAddAsset}>
+        <Button variant="primary" onClick={() => openAssetModal()}>
           <PlusIcon className="h-4 w-4" aria-hidden="true" />
           Position hinzuf?gen
         </Button>
       </div>
+
+      <AddAssetModal
+        isOpen={isAssetModalOpen}
+        onClose={() => setIsAssetModalOpen(false)}
+        onSave={handleAddAsset}
+        category={selectedCategory}
+      />
+
+      <AddSchuldModal
+        isOpen={isSchuldModalOpen}
+        onClose={() => setIsSchuldModalOpen(false)}
+        onSave={handleAddSchuld}
+      />
 
       <Tabs
         items={[
@@ -112,10 +131,16 @@ export default function FinanzanlagenPage() {
             badge: schulden.length,
             content: (
               <div className="space-y-4">
-                <SearchBar
-                  onSearch={() => {}}
-                  onDateFilter={() => {}}
-                />
+                <div className="flex items-center justify-between">
+                  <SearchBar
+                    onSearch={() => {}}
+                    onDateFilter={() => {}}
+                  />
+                  <Button variant="primary" onClick={() => setIsSchuldModalOpen(true)}>
+                    <PlusIcon className="h-4 w-4" aria-hidden="true" />
+                    Schuld hinzuf?gen
+                  </Button>
+                </div>
                 <SchuldenContent schulden={schulden} />
               </div>
             ),
@@ -240,6 +265,9 @@ function SchuldenContent({ schulden }: SchuldenContentProps) {
     return (
       <div className="py-8 text-center">
         <p className="text-gray-500 dark:text-gray-400">Keine Schulden erfasst</p>
+        <p className="text-sm text-gray-400 dark:text-gray-500 mt-2">
+          Verwenden Sie den Button oben, um eine neue Schuld hinzuzuf?gen.
+        </p>
       </div>
     );
   }
