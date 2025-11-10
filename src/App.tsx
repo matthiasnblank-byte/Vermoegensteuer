@@ -2,6 +2,7 @@ import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import AppShell from './components/AppShell';
 import StammdatenPage from './pages/StammdatenPage';
 import FinanzanlagenPage from './pages/FinanzanlagenPage';
+import BerechnungenPage from './pages/BerechnungenPage';
 import SettingsPage from './pages/SettingsPage';
 
 function App() {
@@ -12,6 +13,7 @@ function App() {
           <Route path="/" element={<Navigate to="/stammdaten" replace />} />
           <Route path="/stammdaten" element={<StammdatenPage />} />
           <Route path="/finanzanlagen" element={<FinanzanlagenPage />} />
+          <Route path="/berechnungen" element={<BerechnungenPage />} />
           <Route path="/einstellungen" element={<SettingsPage />} />
         </Routes>
       </AppShell>

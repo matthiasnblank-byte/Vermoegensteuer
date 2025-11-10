@@ -28,6 +28,13 @@ export default function AppShell({ children }: AppShellProps) {
         'Finanzanlagen',
       ];
     }
+    if (location.pathname === '/berechnungen') {
+      return [
+        caseData?.organisation || 'Organisation',
+        caseData?.bereich || 'Bereich',
+        'Berechnungen',
+      ];
+    }
     if (location.pathname === '/einstellungen') {
       return ['Einstellungen'];
     }
