@@ -7,7 +7,7 @@
  * Regex-Pattern für Text-Eingaben, die Umlaute erlauben
  * Erlaubt: Buchstaben (alle Skripte), Ziffern, Leerzeichen, Bindestriche, Punkte, Kommas, Apostroph, Klammern, Schrägstriche
  */
-export const TEXT_PATTERN = /^[\p{L}\p{N}\p{Zs}\-.,'()\/]+$/u;
+export const TEXT_PATTERN = /^[\p{L}\p{N}\p{Zs}\-.,'()/]+$/u;
 
 /**
  * Regex-Pattern für Namen (strenger)
