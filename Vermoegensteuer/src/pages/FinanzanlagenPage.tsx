@@ -217,6 +217,24 @@ export default function FinanzanlagenPage() {
               </div>
             ),
           },
+          {
+            label: 'Berechnung',
+            content: (
+              <VermoegensteuerBerechnung
+                assets={assets}
+                schulden={schulden}
+              />
+            ),
+          },
+          {
+            label: 'Berechnungsliste (DATEV)',
+            content: (
+              <DatevBerechnungsliste
+                assets={assets}
+                schulden={schulden}
+              />
+            ),
+          },
         ]}
       />
 
@@ -250,6 +268,362 @@ export default function FinanzanlagenPage() {
           </div>
         </div>
       </section>
+    </div>
+  );
+}
+
+interface VermoegensteuerBerechnungProps {
+  assets: AssetPosition[];
+  schulden: SchuldPosition[];
+}
+
+function VermoegensteuerBerechnung({ assets, schulden }: VermoegensteuerBerechnungProps) {
+  // Berechnung der Vermögenswerte
+  const bruttovermoegen = assets.reduce((sum, a) => sum + (Number(a.positionswert) || 0), 0);
+  const gesamtschulden = schulden.reduce((sum, s) => sum + (Number(s.nennbetrag) || 0), 0);
+  const nettovermoegen = bruttovermoegen - gesamtschulden;
+
+  // Vermögensteuer-Parameter (beispielhafte Werte)
+  const freibetrag = 500000; // € 500.000 Freibetrag
+  const steuerpflichtiges = Math.max(0, nettovermoegen - freibetrag);
+
+  // Progressive Steuersätze
+  const calculateTax = (amount: number): number => {
+    if (amount <= 0) return 0;
+    
+    // Beispiel: Progressive Staffelung
+    let tax = 0;
+    if (amount > 0) {
+      const bis5Mio = Math.min(amount, 5000000);
+      tax += bis5Mio * 0.005; // 0,5% bis 5 Mio.
+    }
+    if (amount > 5000000) {
+      const bis10Mio = Math.min(amount - 5000000, 5000000);
+      tax += bis10Mio * 0.007; // 0,7% von 5-10 Mio.
+    }
+    if (amount > 10000000) {
+      const ueber10Mio = amount - 10000000;
+      tax += ueber10Mio * 0.01; // 1% über 10 Mio.
+    }
+    
+    return tax;
+  };
+
+  const vermoegensteuer = calculateTax(steuerpflichtiges);
+  const effektiverSteuersatz = nettovermoegen > 0 ? (vermoegensteuer / nettovermoegen) * 100 : 0;
+
+  return (
+    <div className="space-y-6">
+      <div className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 p-6">
+        <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-6">
+          Vermögensteuerberechnung
+        </h2>
+
+        <div className="space-y-4">
+          {/* Vermögensaufstellung */}
+          <div className="grid grid-cols-2 gap-4 pb-4 border-b border-gray-200 dark:border-gray-700">
+            <div className="space-y-2">
+              <div className="flex justify-between">
+                <span className="text-sm text-gray-600 dark:text-gray-400">Bruttovermögen</span>
+                <span className="text-sm font-medium text-gray-900 dark:text-gray-100">
+                  {new Intl.NumberFormat('de-DE', { style: 'currency', currency: 'EUR' }).format(bruttovermoegen)}
+                </span>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-sm text-gray-600 dark:text-gray-400">./. Schulden</span>
+                <span className="text-sm font-medium text-red-600 dark:text-red-400">
+                  {new Intl.NumberFormat('de-DE', { style: 'currency', currency: 'EUR' }).format(gesamtschulden)}
+                </span>
+              </div>
+            </div>
+            <div className="flex justify-between items-center">
+              <span className="font-medium text-gray-900 dark:text-gray-100">Nettovermögen</span>
+              <span className="text-lg font-semibold text-blue-600 dark:text-blue-400">
+                {new Intl.NumberFormat('de-DE', { style: 'currency', currency: 'EUR' }).format(nettovermoegen)}
+              </span>
+            </div>
+          </div>
+
+          {/* Steuerberechnung */}
+          <div className="space-y-3 py-4 border-b border-gray-200 dark:border-gray-700">
+            <div className="flex justify-between">
+              <span className="text-sm text-gray-600 dark:text-gray-400">Nettovermögen</span>
+              <span className="text-sm font-medium text-gray-900 dark:text-gray-100">
+                {new Intl.NumberFormat('de-DE', { style: 'currency', currency: 'EUR' }).format(nettovermoegen)}
+              </span>
+            </div>
+            <div className="flex justify-between">
+              <span className="text-sm text-gray-600 dark:text-gray-400">./. Freibetrag</span>
+              <span className="text-sm font-medium text-gray-900 dark:text-gray-100">
+                {new Intl.NumberFormat('de-DE', { style: 'currency', currency: 'EUR' }).format(freibetrag)}
+              </span>
+            </div>
+            <div className="flex justify-between pt-2 border-t border-gray-100 dark:border-gray-600">
+              <span className="font-medium text-gray-900 dark:text-gray-100">Steuerpflichtiges Vermögen</span>
+              <span className="font-semibold text-gray-900 dark:text-gray-100">
+                {new Intl.NumberFormat('de-DE', { style: 'currency', currency: 'EUR' }).format(steuerpflichtiges)}
+              </span>
+            </div>
+          </div>
+
+          {/* Steuersätze */}
+          <div className="space-y-2 py-4 bg-gray-50 dark:bg-gray-900/50 rounded-lg px-4">
+            <h3 className="text-sm font-semibold text-gray-900 dark:text-gray-100 mb-2">
+              Progressive Steuersätze
+            </h3>
+            <div className="grid grid-cols-2 gap-2 text-xs">
+              <div className="flex justify-between">
+                <span className="text-gray-600 dark:text-gray-400">bis 5 Mio. €</span>
+                <span className="font-medium text-gray-900 dark:text-gray-100">0,5%</span>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-gray-600 dark:text-gray-400">5 - 10 Mio. €</span>
+                <span className="font-medium text-gray-900 dark:text-gray-100">0,7%</span>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-gray-600 dark:text-gray-400">über 10 Mio. €</span>
+                <span className="font-medium text-gray-900 dark:text-gray-100">1,0%</span>
+              </div>
+            </div>
+          </div>
+
+          {/* Ergebnis */}
+          <div className="space-y-3 pt-4">
+            <div className="flex justify-between items-center bg-blue-50 dark:bg-blue-900/20 p-4 rounded-lg">
+              <span className="text-base font-semibold text-gray-900 dark:text-gray-100">
+                Vermögensteuer (jährlich)
+              </span>
+              <span className="text-2xl font-bold text-blue-600 dark:text-blue-400">
+                {new Intl.NumberFormat('de-DE', { style: 'currency', currency: 'EUR' }).format(vermoegensteuer)}
+              </span>
+            </div>
+            <div className="flex justify-between text-sm">
+              <span className="text-gray-600 dark:text-gray-400">Effektiver Steuersatz</span>
+              <span className="font-medium text-gray-900 dark:text-gray-100">
+                {effektiverSteuersatz.toFixed(3)}%
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Hinweise */}
+      <div className="bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800 rounded-lg p-4">
+        <h3 className="text-sm font-semibold text-amber-900 dark:text-amber-200 mb-2">
+          Hinweise zur Berechnung
+        </h3>
+        <ul className="text-sm text-amber-800 dark:text-amber-300 space-y-1 list-disc list-inside">
+          <li>Die Berechnung erfolgt auf Basis des Nettovermögens (Bruttovermögen ./. Schulden)</li>
+          <li>Freibetrag: {new Intl.NumberFormat('de-DE', { style: 'currency', currency: 'EUR' }).format(freibetrag)}</li>
+          <li>Progressive Steuersätze werden auf das steuerpflichtige Vermögen angewendet</li>
+          <li>Diese Berechnung dient nur zur Orientierung und ersetzt keine steuerliche Beratung</li>
+        </ul>
+      </div>
+    </div>
+  );
+}
+
+interface DatevBerechnungslisteProps {
+  assets: AssetPosition[];
+  schulden: SchuldPosition[];
+}
+
+function DatevBerechnungsliste({ assets, schulden }: DatevBerechnungslisteProps) {
+  const bruttovermoegen = assets.reduce((sum, a) => sum + (Number(a.positionswert) || 0), 0);
+  const gesamtschulden = schulden.reduce((sum, s) => sum + (Number(s.nennbetrag) || 0), 0);
+  const nettovermoegen = bruttovermoegen - gesamtschulden;
+
+  // Gruppierung nach Kategorien
+  const kategorien = [
+    'Börsennotierte Wertpapiere',
+    'Nicht börsennotierte Investmentanteile',
+    'Kapitalforderungen',
+    'Sonstige Finanzinstrumente'
+  ];
+
+  const kategorieWerte = kategorien.map(kat => ({
+    name: kat,
+    positionen: assets.filter(a => a.kategorie === kat),
+    summe: assets.filter(a => a.kategorie === kat).reduce((sum, a) => sum + a.positionswert, 0)
+  }));
+
+  return (
+    <div className="space-y-6">
+      <div className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 overflow-hidden">
+        {/* Header */}
+        <div className="bg-gray-100 dark:bg-gray-900 px-6 py-4 border-b border-gray-200 dark:border-gray-700">
+          <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100">
+            Vermögensaufstellung nach DATEV-Standard
+          </h2>
+          <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
+            Bewertungsstichtag: {new Date().toLocaleDateString('de-DE')}
+          </p>
+        </div>
+
+        {/* Berechnungsliste */}
+        <div className="p-6">
+          <table className="w-full text-sm">
+            <thead>
+              <tr className="border-b-2 border-gray-300 dark:border-gray-600">
+                <th className="text-left py-2 px-2 font-semibold text-gray-900 dark:text-gray-100">Pos.</th>
+                <th className="text-left py-2 px-2 font-semibold text-gray-900 dark:text-gray-100">Bezeichnung</th>
+                <th className="text-right py-2 px-2 font-semibold text-gray-900 dark:text-gray-100">Wert (EUR)</th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-gray-200 dark:divide-gray-700">
+              {/* Aktiva */}
+              <tr className="bg-blue-50 dark:bg-blue-900/20">
+                <td colSpan={3} className="py-3 px-2 font-bold text-gray-900 dark:text-gray-100">
+                  A. AKTIVA
+                </td>
+              </tr>
+
+              {kategorieWerte.map((kat, index) => (
+                <>
+                  <tr key={`kat-${index}`} className="bg-gray-50 dark:bg-gray-800/50">
+                    <td className="py-2 px-2 font-semibold text-gray-900 dark:text-gray-100">
+                      {index + 1}.
+                    </td>
+                    <td colSpan={2} className="py-2 px-2 font-semibold text-gray-900 dark:text-gray-100">
+                      {kat.name}
+                    </td>
+                  </tr>
+                  {kat.positionen.map((pos, pIndex) => (
+                    <tr key={`pos-${index}-${pIndex}`}>
+                      <td className="py-1.5 px-2 pl-8 text-gray-600 dark:text-gray-400">
+                        {index + 1}.{pIndex + 1}
+                      </td>
+                      <td className="py-1.5 px-2 text-gray-900 dark:text-gray-100">
+                        {pos.bezeichnung}
+                        {pos.identifikator && (
+                          <span className="text-xs text-gray-500 dark:text-gray-400 ml-2">
+                            ({pos.identifikator})
+                          </span>
+                        )}
+                      </td>
+                      <td className="py-1.5 px-2 text-right font-mono text-gray-900 dark:text-gray-100">
+                        {new Intl.NumberFormat('de-DE', {
+                          minimumFractionDigits: 2,
+                          maximumFractionDigits: 2
+                        }).format(pos.positionswert)}
+                      </td>
+                    </tr>
+                  ))}
+                  <tr className="font-semibold border-t border-gray-300 dark:border-gray-600">
+                    <td className="py-2 px-2"></td>
+                    <td className="py-2 px-2 text-gray-900 dark:text-gray-100">
+                      Summe {kat.name}
+                    </td>
+                    <td className="py-2 px-2 text-right font-mono text-gray-900 dark:text-gray-100">
+                      {new Intl.NumberFormat('de-DE', {
+                        minimumFractionDigits: 2,
+                        maximumFractionDigits: 2
+                      }).format(kat.summe)}
+                    </td>
+                  </tr>
+                </>
+              ))}
+
+              {/* Summe Aktiva */}
+              <tr className="bg-blue-100 dark:bg-blue-900/30 font-bold border-t-2 border-gray-400 dark:border-gray-500">
+                <td className="py-3 px-2"></td>
+                <td className="py-3 px-2 text-gray-900 dark:text-gray-100">
+                  SUMME AKTIVA (Bruttovermögen)
+                </td>
+                <td className="py-3 px-2 text-right font-mono text-gray-900 dark:text-gray-100">
+                  {new Intl.NumberFormat('de-DE', {
+                    minimumFractionDigits: 2,
+                    maximumFractionDigits: 2
+                  }).format(bruttovermoegen)}
+                </td>
+              </tr>
+
+              {/* Passiva */}
+              <tr className="bg-red-50 dark:bg-red-900/20">
+                <td colSpan={3} className="py-3 px-2 font-bold text-gray-900 dark:text-gray-100">
+                  B. PASSIVA (Schulden)
+                </td>
+              </tr>
+
+              {schulden.map((schuld, index) => (
+                <tr key={`schuld-${index}`}>
+                  <td className="py-1.5 px-2 text-gray-600 dark:text-gray-400">
+                    {index + 1}.
+                  </td>
+                  <td className="py-1.5 px-2 text-gray-900 dark:text-gray-100">
+                    {schuld.glaeubiger}
+                    <span className="text-xs text-gray-500 dark:text-gray-400 ml-2">
+                      ({schuld.rechtsgrund})
+                    </span>
+                  </td>
+                  <td className="py-1.5 px-2 text-right font-mono text-gray-900 dark:text-gray-100">
+                    {new Intl.NumberFormat('de-DE', {
+                      minimumFractionDigits: 2,
+                      maximumFractionDigits: 2
+                    }).format(schuld.nennbetrag)}
+                  </td>
+                </tr>
+              ))}
+
+              {/* Summe Passiva */}
+              <tr className="bg-red-100 dark:bg-red-900/30 font-bold border-t-2 border-gray-400 dark:border-gray-500">
+                <td className="py-3 px-2"></td>
+                <td className="py-3 px-2 text-gray-900 dark:text-gray-100">
+                  SUMME PASSIVA (Schulden)
+                </td>
+                <td className="py-3 px-2 text-right font-mono text-gray-900 dark:text-gray-100">
+                  {new Intl.NumberFormat('de-DE', {
+                    minimumFractionDigits: 2,
+                    maximumFractionDigits: 2
+                  }).format(gesamtschulden)}
+                </td>
+              </tr>
+
+              {/* Nettovermögen */}
+              <tr className="bg-green-100 dark:bg-green-900/30 font-bold border-t-4 border-gray-500 dark:border-gray-400">
+                <td className="py-4 px-2"></td>
+                <td className="py-4 px-2 text-lg text-gray-900 dark:text-gray-100">
+                  NETTOVERMÖGEN
+                </td>
+                <td className="py-4 px-2 text-right text-lg font-mono text-gray-900 dark:text-gray-100">
+                  {new Intl.NumberFormat('de-DE', {
+                    minimumFractionDigits: 2,
+                    maximumFractionDigits: 2
+                  }).format(nettovermoegen)}
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        {/* Footer */}
+        <div className="bg-gray-50 dark:bg-gray-900 px-6 py-4 border-t border-gray-200 dark:border-gray-700">
+          <div className="grid grid-cols-2 gap-4 text-xs text-gray-600 dark:text-gray-400">
+            <div>
+              <p className="font-semibold mb-1">Bewertungsgrundlagen:</p>
+              <ul className="space-y-0.5">
+                <li>• Börsennotierte Wertpapiere: § 11 BewG</li>
+                <li>• Investmentanteile: § 9 BewG (gemeiner Wert)</li>
+                <li>• Kapitalforderungen: § 12 BewG (Nennwert)</li>
+                <li>• Schulden: § 12 Abs. 1 BewG (Nennwert)</li>
+              </ul>
+            </div>
+            <div>
+              <p className="font-semibold mb-1">Erstellungsdatum:</p>
+              <p>{new Date().toLocaleDateString('de-DE', { 
+                day: '2-digit', 
+                month: '2-digit', 
+                year: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit'
+              })}</p>
+              <p className="mt-2 text-xs italic">
+                Diese Aufstellung entspricht den DATEV-Richtlinien für Vermögensaufstellungen
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
   );
 }
