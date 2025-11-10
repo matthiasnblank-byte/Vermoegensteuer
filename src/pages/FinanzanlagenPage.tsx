@@ -152,32 +152,109 @@ export default function FinanzanlagenPage() {
         ]}
       />
 
-      <section className="space-y-4 pt-6 border-t border-gray-200 dark:border-gray-700">
-        <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">Summenspiegel</h2>
-        <div className="grid grid-cols-3 gap-4">
-          <div>
-            <div className="text-sm text-gray-500 dark:text-gray-400 mb-1">Vermögen brutto</div>
-            <div className="text-2xl font-semibold text-gray-900 dark:text-gray-100">
-              {new Intl.NumberFormat('de-DE', { style: 'currency', currency: 'EUR' }).format(
-                assets.reduce((sum, a) => sum + a.positionswert, 0)
-              )}
+      <section className="space-y-6 pt-6 border-t-2 border-gray-200 dark:border-gray-700">
+        <div className="flex items-center justify-between">
+          <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-100">Summenspiegel</h2>
+          <span className="text-sm text-gray-500 dark:text-gray-400">Stand: {new Date().toLocaleDateString('de-DE')}</span>
+        </div>
+        
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          {/* Vermögen brutto */}
+          <div className="relative overflow-hidden rounded-xl bg-gradient-to-br from-green-50 to-green-100 dark:from-green-900/30 dark:to-green-800/20 p-6 shadow-md hover:shadow-lg transition-shadow duration-200">
+            <div className="flex items-start justify-between">
+              <div className="flex-1">
+                <div className="flex items-center gap-2 mb-2">
+                  <svg className="h-5 w-5 text-green-600 dark:text-green-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
+                  </svg>
+                  <span className="text-sm font-medium text-green-800 dark:text-green-300">Vermögen brutto</span>
+                </div>
+                <div className="text-3xl font-bold text-green-900 dark:text-green-100 mb-1">
+                  {new Intl.NumberFormat('de-DE', { style: 'currency', currency: 'EUR' }).format(
+                    assets.reduce((sum, a) => sum + a.positionswert, 0)
+                  )}
+                </div>
+                <div className="text-xs text-green-700 dark:text-green-400">
+                  {assets.length} Positionen
+                </div>
+              </div>
+              <div className="absolute -right-4 -bottom-4 opacity-10 dark:opacity-5">
+                <svg className="h-32 w-32 text-green-600" fill="currentColor" viewBox="0 0 24 24">
+                  <path d="M12 2L2 7v10c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V7l-10-5zm0 18c-3.86-.95-7-5.35-7-10V8.64l7-3.82 7 3.82V10c0 4.65-3.14 9.05-7 10z"/>
+                </svg>
+              </div>
             </div>
           </div>
-          <div>
-            <div className="text-sm text-gray-500 dark:text-gray-400 mb-1">Schulden</div>
-            <div className="text-2xl font-semibold text-gray-900 dark:text-gray-100">
-              {new Intl.NumberFormat('de-DE', { style: 'currency', currency: 'EUR' }).format(
-                schulden.reduce((sum, s) => sum + s.nennbetrag, 0)
-              )}
+
+          {/* Schulden */}
+          <div className="relative overflow-hidden rounded-xl bg-gradient-to-br from-red-50 to-red-100 dark:from-red-900/30 dark:to-red-800/20 p-6 shadow-md hover:shadow-lg transition-shadow duration-200">
+            <div className="flex items-start justify-between">
+              <div className="flex-1">
+                <div className="flex items-center gap-2 mb-2">
+                  <svg className="h-5 w-5 text-red-600 dark:text-red-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 17h8m0 0v-8m0 8l-8-8-4 4-6-6" />
+                  </svg>
+                  <span className="text-sm font-medium text-red-800 dark:text-red-300">Schulden</span>
+                </div>
+                <div className="text-3xl font-bold text-red-900 dark:text-red-100 mb-1">
+                  {new Intl.NumberFormat('de-DE', { style: 'currency', currency: 'EUR' }).format(
+                    schulden.reduce((sum, s) => sum + s.nennbetrag, 0)
+                  )}
+                </div>
+                <div className="text-xs text-red-700 dark:text-red-400">
+                  {schulden.length} Verbindlichkeiten
+                </div>
+              </div>
+              <div className="absolute -right-4 -bottom-4 opacity-10 dark:opacity-5">
+                <svg className="h-32 w-32 text-red-600" fill="currentColor" viewBox="0 0 24 24">
+                  <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/>
+                </svg>
+              </div>
             </div>
           </div>
-          <div>
-            <div className="text-sm text-gray-500 dark:text-gray-400 mb-1">Vermögen netto</div>
-            <div className="text-2xl font-semibold text-gray-900 dark:text-gray-100">
-              {new Intl.NumberFormat('de-DE', { style: 'currency', currency: 'EUR' }).format(
-                assets.reduce((sum, a) => sum + a.positionswert, 0) -
-                schulden.reduce((sum, s) => sum + s.nennbetrag, 0)
-              )}
+
+          {/* Vermögen netto */}
+          <div className="relative overflow-hidden rounded-xl bg-gradient-to-br from-blue-50 to-blue-100 dark:from-blue-900/30 dark:to-blue-800/20 p-6 shadow-md hover:shadow-lg transition-shadow duration-200 border-2 border-blue-200 dark:border-blue-700">
+            <div className="flex items-start justify-between">
+              <div className="flex-1">
+                <div className="flex items-center gap-2 mb-2">
+                  <svg className="h-5 w-5 text-blue-600 dark:text-blue-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                  </svg>
+                  <span className="text-sm font-medium text-blue-800 dark:text-blue-300">Vermögen netto</span>
+                </div>
+                <div className="text-3xl font-bold text-blue-900 dark:text-blue-100 mb-1">
+                  {new Intl.NumberFormat('de-DE', { style: 'currency', currency: 'EUR' }).format(
+                    assets.reduce((sum, a) => sum + a.positionswert, 0) -
+                    schulden.reduce((sum, s) => sum + s.nennbetrag, 0)
+                  )}
+                </div>
+                <div className="text-xs text-blue-700 dark:text-blue-400">
+                  Steuerbemessungsgrundlage
+                </div>
+              </div>
+              <div className="absolute -right-4 -bottom-4 opacity-10 dark:opacity-5">
+                <svg className="h-32 w-32 text-blue-600" fill="currentColor" viewBox="0 0 24 24">
+                  <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
+                </svg>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Zusätzliche Informationen */}
+        <div className="bg-gray-50 dark:bg-gray-800/50 rounded-lg p-4 border border-gray-200 dark:border-gray-700">
+          <div className="flex items-start gap-3">
+            <svg className="h-5 w-5 text-blue-600 dark:text-blue-400 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+            <div className="flex-1">
+              <p className="text-sm text-gray-700 dark:text-gray-300 mb-1">
+                <strong>Hinweis zur Vermögensteuer:</strong> Die Berechnung basiert auf den eingegebenen Werten zum Bewertungsstichtag.
+              </p>
+              <p className="text-xs text-gray-600 dark:text-gray-400">
+                Bewertungsgrundlage: §§ 9-12 BewG | Stichtag: {new Date().toLocaleDateString('de-DE')}
+              </p>
             </div>
           </div>
         </div>
