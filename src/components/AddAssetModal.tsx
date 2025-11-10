@@ -7,11 +7,12 @@ interface AddAssetModalProps {
   isOpen: boolean;
   onClose: () => void;
   onSave: (asset: AssetPosition) => void;
+  onDelete?: (id: string) => void;
   category: string;
   asset?: AssetPosition;
 }
 
-export default function AddAssetModal({ isOpen, onClose, onSave, category, asset }: AddAssetModalProps) {
+export default function AddAssetModal({ isOpen, onClose, onSave, onDelete, category, asset }: AddAssetModalProps) {
   const [formData, setFormData] = useState<Partial<AssetPosition>>({
     kategorie: category,
     bezeichnung: '',
@@ -91,6 +92,15 @@ export default function AddAssetModal({ isOpen, onClose, onSave, category, asset
       ...prev,
       [field]: value,
     }));
+  };
+
+  const handleDelete = () => {
+    if (asset && onDelete) {
+      if (window.confirm('Möchten Sie diese Position wirklich löschen?')) {
+        onDelete(asset.id);
+        onClose();
+      }
+    }
   };
 
   return (
@@ -222,13 +232,22 @@ export default function AddAssetModal({ isOpen, onClose, onSave, category, asset
           )}
         </div>
 
-        <div className="flex justify-end gap-3 pt-4 border-t border-gray-200 dark:border-gray-700">
-          <Button variant="secondary" onClick={onClose} type="button">
-            Abbrechen
-          </Button>
-          <Button variant="primary" type="submit">
-            {asset ? 'Änderungen speichern' : 'Position hinzufügen'}
-          </Button>
+        <div className="flex justify-between items-center pt-4 border-t border-gray-200 dark:border-gray-700">
+          <div>
+            {asset && onDelete && (
+              <Button variant="secondary" onClick={handleDelete} type="button" className="text-red-600 hover:text-red-700 dark:text-red-400 dark:hover:text-red-300">
+                Löschen
+              </Button>
+            )}
+          </div>
+          <div className="flex gap-3">
+            <Button variant="secondary" onClick={onClose} type="button">
+              Abbrechen
+            </Button>
+            <Button variant="primary" type="submit">
+              {asset ? 'Änderungen speichern' : 'Position hinzufügen'}
+            </Button>
+          </div>
         </div>
       </form>
     </Modal>

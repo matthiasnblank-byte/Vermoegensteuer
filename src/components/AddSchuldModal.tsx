@@ -7,10 +7,11 @@ interface AddSchuldModalProps {
   isOpen: boolean;
   onClose: () => void;
   onSave: (schuld: SchuldPosition) => void;
+  onDelete?: (id: string) => void;
   schuld?: SchuldPosition;
 }
 
-export default function AddSchuldModal({ isOpen, onClose, onSave, schuld }: AddSchuldModalProps) {
+export default function AddSchuldModal({ isOpen, onClose, onSave, onDelete, schuld }: AddSchuldModalProps) {
   const [formData, setFormData] = useState<Partial<SchuldPosition>>({
     glaeubiger: '',
     rechtsgrund: '',
@@ -79,6 +80,15 @@ export default function AddSchuldModal({ isOpen, onClose, onSave, schuld }: AddS
       ...prev,
       [field]: value,
     }));
+  };
+
+  const handleDelete = () => {
+    if (schuld && onDelete) {
+      if (window.confirm('Möchten Sie diese Schuld wirklich löschen?')) {
+        onDelete(schuld.id);
+        onClose();
+      }
+    }
   };
 
   return (
@@ -178,13 +188,22 @@ export default function AddSchuldModal({ isOpen, onClose, onSave, schuld }: AddS
           </div>
         </div>
 
-        <div className="flex justify-end gap-3 pt-4 border-t border-gray-200 dark:border-gray-700">
-          <Button variant="secondary" onClick={onClose} type="button">
-            Abbrechen
-          </Button>
-          <Button variant="primary" type="submit">
-            {schuld ? 'Änderungen speichern' : 'Schuld hinzufügen'}
-          </Button>
+        <div className="flex justify-between items-center pt-4 border-t border-gray-200 dark:border-gray-700">
+          <div>
+            {schuld && onDelete && (
+              <Button variant="secondary" onClick={handleDelete} type="button" className="text-red-600 hover:text-red-700 dark:text-red-400 dark:hover:text-red-300">
+                Löschen
+              </Button>
+            )}
+          </div>
+          <div className="flex gap-3">
+            <Button variant="secondary" onClick={onClose} type="button">
+              Abbrechen
+            </Button>
+            <Button variant="primary" type="submit">
+              {schuld ? 'Änderungen speichern' : 'Schuld hinzufügen'}
+            </Button>
+          </div>
         </div>
       </form>
     </Modal>

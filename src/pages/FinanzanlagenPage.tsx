@@ -5,7 +5,7 @@ import SearchBar from '../components/SearchBar';
 import Button from '../components/Button';
 import AddAssetModal from '../components/AddAssetModal';
 import AddSchuldModal from '../components/AddSchuldModal';
-import { PlusIcon, ArrowUpTrayIcon } from '@heroicons/react/24/outline';
+import { PlusIcon, TrashIcon, PencilIcon } from '@heroicons/react/24/outline';
 
 export default function FinanzanlagenPage() {
   const [assets, setAssets] = useState<AssetPosition[]>([]);
@@ -53,6 +53,22 @@ export default function FinanzanlagenPage() {
     storageService.saveSchulden(updated);
     setSchulden(updated);
     setEditingSchuld(undefined);
+  };
+
+  const handleDeleteAsset = (id: string) => {
+    if (window.confirm('Möchten Sie diese Position wirklich löschen?')) {
+      const updated = assets.filter((a) => a.id !== id);
+      storageService.saveAssets(updated);
+      setAssets(updated);
+    }
+  };
+
+  const handleDeleteSchuld = (id: string) => {
+    if (window.confirm('Möchten Sie diese Schuld wirklich löschen?')) {
+      const updated = schulden.filter((s) => s.id !== id);
+      storageService.saveSchulden(updated);
+      setSchulden(updated);
+    }
   };
 
   const openAssetModal = (category: string = 'Börsennotierte Wertpapiere', asset?: AssetPosition) => {
@@ -110,6 +126,7 @@ export default function FinanzanlagenPage() {
           setEditingAsset(undefined);
         }}
         onSave={handleAddAsset}
+        onDelete={handleDeleteAsset}
         category={selectedCategory}
         asset={editingAsset}
       />
@@ -121,6 +138,7 @@ export default function FinanzanlagenPage() {
           setEditingSchuld(undefined);
         }}
         onSave={handleAddSchuld}
+        onDelete={handleDeleteSchuld}
         schuld={editingSchuld}
       />
 
@@ -143,6 +161,7 @@ export default function FinanzanlagenPage() {
                   )}
                   onAddClick={() => openAssetModal('Börsennotierte Wertpapiere')}
                   onEdit={(asset) => openAssetModal(asset.kategorie, asset)}
+                  onDelete={handleDeleteAsset}
                 />
               </div>
             ),
@@ -164,6 +183,7 @@ export default function FinanzanlagenPage() {
                   )}
                   onAddClick={() => openAssetModal('Nicht börsennotierte Investmentanteile')}
                   onEdit={(asset) => openAssetModal(asset.kategorie, asset)}
+                  onDelete={handleDeleteAsset}
                 />
               </div>
             ),
@@ -185,6 +205,7 @@ export default function FinanzanlagenPage() {
                   )}
                   onAddClick={() => openAssetModal('Kapitalforderungen')}
                   onEdit={(asset) => openAssetModal(asset.kategorie, asset)}
+                  onDelete={handleDeleteAsset}
                 />
               </div>
             ),
@@ -206,6 +227,7 @@ export default function FinanzanlagenPage() {
                   )}
                   onAddClick={() => openAssetModal('Sonstige Finanzinstrumente')}
                   onEdit={(asset) => openAssetModal(asset.kategorie, asset)}
+                  onDelete={handleDeleteAsset}
                 />
               </div>
             ),
@@ -228,6 +250,7 @@ export default function FinanzanlagenPage() {
                 <SchuldenContent
                   schulden={filterSchulden(schulden, searchQueries['Schulden'] || '')}
                   onEdit={(schuld) => openSchuldModal(schuld)}
+                  onDelete={handleDeleteSchuld}
                 />
               </div>
             ),
@@ -351,9 +374,10 @@ interface AssetCategoryContentProps {
   assets: AssetPosition[];
   onAddClick: () => void;
   onEdit: (asset: AssetPosition) => void;
+  onDelete: (id: string) => void;
 }
 
-function AssetCategoryContent({ category, assets, onAddClick, onEdit }: AssetCategoryContentProps) {
+function AssetCategoryContent({ category, assets, onAddClick, onEdit, onDelete }: AssetCategoryContentProps) {
   if (assets.length === 0) {
     return (
       <div className="py-8 text-center">
@@ -405,12 +429,20 @@ function AssetCategoryContent({ category, assets, onAddClick, onEdit }: AssetCat
                 <td className="px-4 py-3 text-sm text-gray-500 dark:text-gray-400">{asset.quelle || '-'}</td>
                 <td className="px-4 py-3">
                   <div className="flex items-center gap-2">
-                    <Button variant="secondary" onClick={() => onEdit(asset)} className="text-xs py-1 px-2">
-                      Bearbeiten
-                    </Button>
-                    <Button variant="secondary" onClick={() => {}} className="text-xs py-1 px-2">
-                      <ArrowUpTrayIcon className="h-3 w-3" aria-hidden="true" />
-                    </Button>
+                    <button
+                      onClick={() => onEdit(asset)}
+                      className="p-1.5 text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300 hover:bg-blue-50 dark:hover:bg-blue-900/30 rounded focus:outline-none focus:ring-2 focus:ring-blue-600"
+                      title="Bearbeiten"
+                    >
+                      <PencilIcon className="h-4 w-4" aria-hidden="true" />
+                    </button>
+                    <button
+                      onClick={() => onDelete(asset.id)}
+                      className="p-1.5 text-red-600 hover:text-red-800 dark:text-red-400 dark:hover:text-red-300 hover:bg-red-50 dark:hover:bg-red-900/30 rounded focus:outline-none focus:ring-2 focus:ring-red-600"
+                      title="Löschen"
+                    >
+                      <TrashIcon className="h-4 w-4" aria-hidden="true" />
+                    </button>
                   </div>
                 </td>
               </tr>
@@ -425,9 +457,10 @@ function AssetCategoryContent({ category, assets, onAddClick, onEdit }: AssetCat
 interface SchuldenContentProps {
   schulden: SchuldPosition[];
   onEdit: (schuld: SchuldPosition) => void;
+  onDelete: (id: string) => void;
 }
 
-function SchuldenContent({ schulden, onEdit }: SchuldenContentProps) {
+function SchuldenContent({ schulden, onEdit, onDelete }: SchuldenContentProps) {
   if (schulden.length === 0) {
     return (
       <div className="py-8 text-center">
@@ -471,9 +504,22 @@ function SchuldenContent({ schulden, onEdit }: SchuldenContentProps) {
                 </td>
                 <td className="px-4 py-3 text-sm text-gray-500 dark:text-gray-400">{schuld.zinssatz ? `${schuld.zinssatz}%` : '-'}</td>
                 <td className="px-4 py-3">
-                  <Button variant="secondary" onClick={() => onEdit(schuld)} className="text-xs py-1 px-2">
-                    Bearbeiten
-                  </Button>
+                  <div className="flex items-center gap-2">
+                    <button
+                      onClick={() => onEdit(schuld)}
+                      className="p-1.5 text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300 hover:bg-blue-50 dark:hover:bg-blue-900/30 rounded focus:outline-none focus:ring-2 focus:ring-blue-600"
+                      title="Bearbeiten"
+                    >
+                      <PencilIcon className="h-4 w-4" aria-hidden="true" />
+                    </button>
+                    <button
+                      onClick={() => onDelete(schuld.id)}
+                      className="p-1.5 text-red-600 hover:text-red-800 dark:text-red-400 dark:hover:text-red-300 hover:bg-red-50 dark:hover:bg-red-900/30 rounded focus:outline-none focus:ring-2 focus:ring-red-600"
+                      title="Löschen"
+                    >
+                      <TrashIcon className="h-4 w-4" aria-hidden="true" />
+                    </button>
+                  </div>
                 </td>
               </tr>
             ))}
