@@ -285,30 +285,6 @@ export default function StammdatenPage() {
     </div>
   );
 
-  const berechnungslisteContent = (
-    <div className="space-y-4">
-      <div className="bg-white dark:bg-gray-900 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-6">
-        <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">
-          Berechnungsliste
-        </h3>
-        <div className="space-y-4">
-          <div className="flex items-center justify-between p-4 bg-gray-50 dark:bg-gray-800 rounded-lg">
-            <div>
-              <p className="text-sm font-medium text-gray-900 dark:text-gray-100">Vermögensteuerberechnung</p>
-              <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">Basierend auf aktuellen Stammdaten und Finanzanlagen</p>
-            </div>
-            <Button variant="primary" onClick={() => {}}>
-              Berechnung starten
-            </Button>
-          </div>
-          <div className="text-center py-8 text-gray-500 dark:text-gray-400">
-            <p>Noch keine Berechnungen vorhanden.</p>
-            <p className="text-sm mt-2">Starten Sie eine Berechnung, um die Ergebnisse hier anzuzeigen.</p>
-          </div>
-        </div>
-      </div>
-    </div>
-  );
 
   const dokumenteContent = (
     <div className="space-y-4">
@@ -350,10 +326,6 @@ export default function StammdatenPage() {
           {
             label: 'Stammdaten',
             content: stammdatenContent,
-          },
-          {
-            label: 'Berechnungsliste',
-            content: berechnungslisteContent,
           },
           {
             label: 'Dokumente',
