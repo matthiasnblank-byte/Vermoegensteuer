@@ -1,6 +1,6 @@
 import { Fragment, useState, useEffect } from 'react';
 import { Dialog, Transition } from '@headlessui/react';
-import { XMarkIcon } from '@heroicons/react/24/outline';
+import { XMarkIcon, TrashIcon } from '@heroicons/react/24/outline';
 import { SchuldPosition } from '../services/storageService';
 import Button from './Button';
 
@@ -8,10 +8,11 @@ interface SchuldDialogProps {
   isOpen: boolean;
   onClose: () => void;
   onSave: (schuld: SchuldPosition) => void;
+  onDelete?: (id: string) => void;
   schuld?: SchuldPosition;
 }
 
-export default function SchuldDialog({ isOpen, onClose, onSave, schuld }: SchuldDialogProps) {
+export default function SchuldDialog({ isOpen, onClose, onSave, onDelete, schuld }: SchuldDialogProps) {
   const [formData, setFormData] = useState<Partial<SchuldPosition>>({
     glaeubiger: '',
     rechtsgrund: '',
@@ -55,6 +56,15 @@ export default function SchuldDialog({ isOpen, onClose, onSave, schuld }: Schuld
     
     onSave(schuldToSave);
     onClose();
+  };
+
+  const handleDelete = () => {
+    if (schuld && onDelete) {
+      if (window.confirm('Möchten Sie diese Schuld wirklich löschen?')) {
+        onDelete(schuld.id);
+        onClose();
+      }
+    }
   };
 
   return (
@@ -188,13 +198,28 @@ export default function SchuldDialog({ isOpen, onClose, onSave, schuld }: Schuld
                     </div>
                   </div>
 
-                  <div className="mt-6 flex justify-end gap-3">
-                    <Button variant="secondary" onClick={onClose} type="button">
-                      Abbrechen
-                    </Button>
-                    <Button variant="primary" type="submit">
-                      {schuld ? 'Speichern' : 'Hinzufügen'}
-                    </Button>
+                  <div className="mt-6 flex justify-between gap-3">
+                    <div>
+                      {schuld && onDelete && (
+                        <Button 
+                          variant="secondary" 
+                          onClick={handleDelete} 
+                          type="button"
+                          className="text-red-600 hover:text-red-700 dark:text-red-400 dark:hover:text-red-300 border-red-300 dark:border-red-600 hover:bg-red-50 dark:hover:bg-red-900/30"
+                        >
+                          <TrashIcon className="h-4 w-4" aria-hidden="true" />
+                          Löschen
+                        </Button>
+                      )}
+                    </div>
+                    <div className="flex gap-3">
+                      <Button variant="secondary" onClick={onClose} type="button">
+                        Abbrechen
+                      </Button>
+                      <Button variant="primary" type="submit">
+                        {schuld ? 'Speichern' : 'Hinzufügen'}
+                      </Button>
+                    </div>
                   </div>
                 </form>
               </Dialog.Panel>
