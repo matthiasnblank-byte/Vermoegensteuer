@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { CaseData, storageService } from '../services/storageService';
 import Button from '../components/Button';
+import Tabs from '../components/Tabs';
 import { ArrowUpTrayIcon } from '@heroicons/react/24/outline';
 
 export default function StammdatenPage() {
@@ -56,7 +57,7 @@ export default function StammdatenPage() {
     return <div className="p-4">Lade...</div>;
   }
 
-  return (
+  const stammdatenContent = (
     <div className="max-w-4xl space-y-8">
       <section className="space-y-4">
         <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">
@@ -281,6 +282,89 @@ export default function StammdatenPage() {
           Speichern
         </Button>
       </div>
+    </div>
+  );
+
+  const berechnungslisteContent = (
+    <div className="space-y-4">
+      <div className="bg-white dark:bg-gray-900 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-6">
+        <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">
+          Berechnungsliste
+        </h3>
+        <div className="space-y-4">
+          <div className="flex items-center justify-between p-4 bg-gray-50 dark:bg-gray-800 rounded-lg">
+            <div>
+              <p className="text-sm font-medium text-gray-900 dark:text-gray-100">Vermögensteuerberechnung</p>
+              <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">Basierend auf aktuellen Stammdaten und Finanzanlagen</p>
+            </div>
+            <Button variant="primary" onClick={() => {}}>
+              Berechnung starten
+            </Button>
+          </div>
+          <div className="text-center py-8 text-gray-500 dark:text-gray-400">
+            <p>Noch keine Berechnungen vorhanden.</p>
+            <p className="text-sm mt-2">Starten Sie eine Berechnung, um die Ergebnisse hier anzuzeigen.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+
+  const dokumenteContent = (
+    <div className="space-y-4">
+      <div className="bg-white dark:bg-gray-900 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-6">
+        <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">
+          Dokumente & Nachweise
+        </h3>
+        <div className="text-center py-8 text-gray-500 dark:text-gray-400">
+          <p>Keine Dokumente hochgeladen.</p>
+          <Button variant="primary" onClick={() => {}} className="mt-4">
+            <ArrowUpTrayIcon className="h-4 w-4" aria-hidden="true" />
+            Dokument hochladen
+          </Button>
+        </div>
+      </div>
+    </div>
+  );
+
+  const protokollContent = (
+    <div className="space-y-4">
+      <div className="bg-white dark:bg-gray-900 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-6">
+        <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">
+          Änderungsprotokoll
+        </h3>
+        <div className="text-center py-8 text-gray-500 dark:text-gray-400">
+          <p>Keine Einträge im Protokoll.</p>
+          <p className="text-sm mt-2">Änderungen an den Stammdaten werden hier protokolliert.</p>
+        </div>
+      </div>
+    </div>
+  );
+
+  return (
+    <div className="space-y-6">
+      <h1 className="text-2xl font-semibold text-gray-900 dark:text-gray-100">Stammdaten</h1>
+      
+      <Tabs
+        items={[
+          {
+            label: 'Stammdaten',
+            content: stammdatenContent,
+          },
+          {
+            label: 'Berechnungsliste',
+            content: berechnungslisteContent,
+          },
+          {
+            label: 'Dokumente',
+            content: dokumenteContent,
+          },
+          {
+            label: 'Protokoll',
+            content: protokollContent,
+          },
+        ]}
+      />
     </div>
   );
 }
