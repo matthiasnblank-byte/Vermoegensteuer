@@ -58,29 +58,65 @@ class StorageService {
 
   getCase(): CaseData | null {
     const data = localStorage.getItem(this.CASE_KEY);
-    return data ? JSON.parse(data) : null;
+    if (!data) return null;
+    try {
+      return JSON.parse(data);
+    } catch (e) {
+      console.error('Fehler beim Parsen der Case-Daten:', e);
+      return null;
+    }
   }
 
   saveCase(caseData: CaseData): void {
-    localStorage.setItem(this.CASE_KEY, JSON.stringify(caseData));
+    try {
+      // Sicherstellen, dass alle Strings UTF-8 kodiert sind
+      const jsonString = JSON.stringify(caseData, null, 2);
+      localStorage.setItem(this.CASE_KEY, jsonString);
+    } catch (e) {
+      console.error('Fehler beim Speichern der Case-Daten:', e);
+    }
   }
 
   getAssets(): AssetPosition[] {
     const data = localStorage.getItem(this.ASSETS_KEY);
-    return data ? JSON.parse(data) : [];
+    if (!data) return [];
+    try {
+      return JSON.parse(data);
+    } catch (e) {
+      console.error('Fehler beim Parsen der Asset-Daten:', e);
+      return [];
+    }
   }
 
   saveAssets(assets: AssetPosition[]): void {
-    localStorage.setItem(this.ASSETS_KEY, JSON.stringify(assets));
+    try {
+      // Sicherstellen, dass alle Strings UTF-8 kodiert sind
+      const jsonString = JSON.stringify(assets, null, 2);
+      localStorage.setItem(this.ASSETS_KEY, jsonString);
+    } catch (e) {
+      console.error('Fehler beim Speichern der Asset-Daten:', e);
+    }
   }
 
   getSchulden(): SchuldPosition[] {
     const data = localStorage.getItem(this.SCHULDEN_KEY);
-    return data ? JSON.parse(data) : [];
+    if (!data) return [];
+    try {
+      return JSON.parse(data);
+    } catch (e) {
+      console.error('Fehler beim Parsen der Schulden-Daten:', e);
+      return [];
+    }
   }
 
   saveSchulden(schulden: SchuldPosition[]): void {
-    localStorage.setItem(this.SCHULDEN_KEY, JSON.stringify(schulden));
+    try {
+      // Sicherstellen, dass alle Strings UTF-8 kodiert sind
+      const jsonString = JSON.stringify(schulden, null, 2);
+      localStorage.setItem(this.SCHULDEN_KEY, jsonString);
+    } catch (e) {
+      console.error('Fehler beim Speichern der Schulden-Daten:', e);
+    }
   }
 
   initMockData(): void {
@@ -155,6 +191,30 @@ class StorageService {
         },
         {
           id: 'asset-4',
+          kategorie: 'Börsennotierte Wertpapiere',
+          identifikator: 'DE0008430026',
+          bezeichnung: 'Münchener Rückversicherungs-Gesellschaft AG',
+          menge: 75,
+          einheitswert: 285.30,
+          positionswert: 21397.50,
+          bewertungsmethode: '§ 11 BewG',
+          kursdatum: '2024-12-31',
+          quelle: 'Xetra',
+        },
+        {
+          id: 'asset-5',
+          kategorie: 'Börsennotierte Wertpapiere',
+          identifikator: 'DE0007664039',
+          bezeichnung: 'Bayerische Motoren Werke AG',
+          menge: 30,
+          einheitswert: 98.45,
+          positionswert: 2953.50,
+          bewertungsmethode: '§ 11 BewG',
+          kursdatum: '2024-12-31',
+          quelle: 'Xetra',
+        },
+        {
+          id: 'asset-6',
           kategorie: 'Nicht börsennotierte Investmentanteile',
           identifikator: 'DE0008491051',
           bezeichnung: 'DWS Top Dividende LD',
@@ -166,7 +226,7 @@ class StorageService {
           quelle: 'DWS',
         },
         {
-          id: 'asset-5',
+          id: 'asset-7',
           kategorie: 'Nicht börsennotierte Investmentanteile',
           identifikator: 'LU0274208692',
           bezeichnung: 'Xtrackers MSCI World UCITS ETF',
@@ -178,7 +238,31 @@ class StorageService {
           quelle: 'Bloomberg',
         },
         {
-          id: 'asset-6',
+          id: 'asset-8',
+          kategorie: 'Nicht börsennotierte Investmentanteile',
+          identifikator: 'DE0009772657',
+          bezeichnung: 'Deka-ÖkoRent Fonds',
+          menge: 200,
+          einheitswert: 125.80,
+          positionswert: 25160,
+          bewertungsmethode: '§ 9 BewG (gemeiner Wert)',
+          kursdatum: '2024-12-31',
+          quelle: 'Deka Investment',
+        },
+        {
+          id: 'asset-9',
+          kategorie: 'Nicht börsennotierte Investmentanteile',
+          identifikator: 'LU1861132840',
+          bezeichnung: 'Allianz Global Investors Fonds',
+          menge: 80,
+          einheitswert: 142.25,
+          positionswert: 11380,
+          bewertungsmethode: '§ 9 BewG (gemeiner Wert)',
+          kursdatum: '2024-12-31',
+          quelle: 'Allianz Global Investors',
+        },
+        {
+          id: 'asset-10',
           kategorie: 'Kapitalforderungen',
           identifikator: 'DE12345678901234567890',
           bezeichnung: 'Tagesgeldkonto Sparkasse München',
@@ -190,7 +274,7 @@ class StorageService {
           quelle: 'Kontoauszug',
         },
         {
-          id: 'asset-7',
+          id: 'asset-11',
           kategorie: 'Kapitalforderungen',
           identifikator: 'DE09876543210987654321',
           bezeichnung: 'Festgeld Deutsche Bank',
@@ -202,7 +286,43 @@ class StorageService {
           quelle: 'Kontoauszug',
         },
         {
-          id: 'asset-8',
+          id: 'asset-12',
+          kategorie: 'Kapitalforderungen',
+          identifikator: 'DE11223344556677889900',
+          bezeichnung: 'Girokonto Commerzbank Köln',
+          menge: 1,
+          einheitswert: 15000,
+          positionswert: 15000,
+          bewertungsmethode: '§ 12 BewG',
+          kursdatum: '2024-12-31',
+          quelle: 'Kontoauszug',
+        },
+        {
+          id: 'asset-13',
+          kategorie: 'Kapitalforderungen',
+          identifikator: 'DE99887766554433221100',
+          bezeichnung: 'Forderung gegen Müller & Söhne GmbH',
+          menge: 1,
+          einheitswert: 35000,
+          positionswert: 35000,
+          bewertungsmethode: '§ 12 BewG',
+          kursdatum: '2024-12-31',
+          quelle: 'Rechnungsstellung',
+        },
+        {
+          id: 'asset-14',
+          kategorie: 'Kapitalforderungen',
+          identifikator: 'DE55667788990011223344',
+          bezeichnung: 'Darlehensforderung gegen Schröder Immobilien',
+          menge: 1,
+          einheitswert: 120000,
+          positionswert: 120000,
+          bewertungsmethode: '§ 12 BewG',
+          kursdatum: '2024-12-31',
+          quelle: 'Darlehensvertrag',
+        },
+        {
+          id: 'asset-15',
           kategorie: 'Sonstige Finanzinstrumente',
           bezeichnung: 'Bitcoin (BTC)',
           menge: 0.5,
@@ -213,7 +333,7 @@ class StorageService {
           quelle: 'Coinbase',
         },
         {
-          id: 'asset-9',
+          id: 'asset-16',
           kategorie: 'Sonstige Finanzinstrumente',
           bezeichnung: 'Ethereum (ETH)',
           menge: 5,
@@ -222,6 +342,28 @@ class StorageService {
           bewertungsmethode: '§ 9 BewG (gemeiner Wert)',
           kursdatum: '2024-12-31',
           quelle: 'Coinbase',
+        },
+        {
+          id: 'asset-17',
+          kategorie: 'Sonstige Finanzinstrumente',
+          bezeichnung: 'Optionsschein auf Daimler AG',
+          menge: 100,
+          einheitswert: 12.50,
+          positionswert: 1250,
+          bewertungsmethode: '§ 9 BewG (gemeiner Wert)',
+          kursdatum: '2024-12-31',
+          quelle: 'Börse Stuttgart',
+        },
+        {
+          id: 'asset-18',
+          kategorie: 'Sonstige Finanzinstrumente',
+          bezeichnung: 'Wandelanleihe Münchener Hypothekenbank',
+          menge: 1,
+          einheitswert: 45000,
+          positionswert: 45000,
+          bewertungsmethode: '§ 9 BewG (gemeiner Wert)',
+          kursdatum: '2024-12-31',
+          quelle: 'Emittent',
         },
       ]);
     }
@@ -254,6 +396,69 @@ class StorageService {
           faelligkeit: '2029-12-31',
           zinssatz: 1.2,
           besicherung: 'Nachrangig',
+        },
+        {
+          id: 'schuld-4',
+          glaeubiger: 'Commerzbank Köln',
+          rechtsgrund: 'Kontokorrentkredit',
+          nennbetrag: 30000,
+          faelligkeit: '2025-12-31',
+          zinssatz: 4.2,
+          besicherung: 'Bürgschaft durch Geschäftsführer',
+        },
+        {
+          id: 'schuld-5',
+          glaeubiger: 'Münchener Hypothekenbank',
+          rechtsgrund: 'Hypothekendarlehen',
+          nennbetrag: 180000,
+          faelligkeit: '2035-06-15',
+          zinssatz: 2.1,
+          besicherung: 'Grundschuld auf Bürogebäude',
+        },
+        {
+          id: 'schuld-6',
+          glaeubiger: 'Bayerische Landesbank',
+          rechtsgrund: 'Investitionskredit',
+          nennbetrag: 95000,
+          faelligkeit: '2028-03-31',
+          zinssatz: 3.5,
+          besicherung: 'Sicherungsübereignung Maschinen',
+        },
+        {
+          id: 'schuld-7',
+          glaeubiger: 'Volksbank Nürnberg',
+          rechtsgrund: 'Leasingvertrag',
+          nennbetrag: 15000,
+          faelligkeit: '2026-09-30',
+          zinssatz: 5.0,
+          besicherung: 'Leasinggegenstand',
+        },
+        {
+          id: 'schuld-8',
+          glaeubiger: 'Dresdner Bank',
+          rechtsgrund: 'Überziehungskredit',
+          nennbetrag: 12000,
+          faelligkeit: '2025-01-31',
+          zinssatz: 8.5,
+          besicherung: 'Keine',
+        },
+        {
+          id: 'schuld-9',
+          glaeubiger: 'Postbank',
+          rechtsgrund: 'Ratenkredit',
+          nennbetrag: 25000,
+          faelligkeit: '2027-12-31',
+          zinssatz: 6.2,
+          besicherung: 'Lohnabtretung',
+        },
+        {
+          id: 'schuld-10',
+          glaeubiger: 'HypoVereinsbank',
+          rechtsgrund: 'Bauspardarlehen',
+          nennbetrag: 60000,
+          faelligkeit: '2030-06-30',
+          zinssatz: 1.8,
+          besicherung: 'Bausparvertrag',
         },
       ]);
     }
