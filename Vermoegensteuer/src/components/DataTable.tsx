@@ -62,7 +62,7 @@ export default function DataTable({ rows }: DataTableProps) {
                 checked={selectedRows.size === rows.length && rows.length > 0}
                 onChange={toggleAll}
                 className="h-4 w-4 text-blue-600 border-gray-300 rounded focus:ring-blue-600"
-                aria-label="Alle Zeilen ausw?hlen"
+                aria-label="Alle Zeilen auswählen"
               />
             </th>
             <th scope="col" className="px-3 py-3 text-left text-xs font-semibold text-gray-900 uppercase tracking-wider">
@@ -75,7 +75,7 @@ export default function DataTable({ rows }: DataTableProps) {
               Status/Match
             </th>
             <th scope="col" className="px-3 py-3 text-left text-xs font-semibold text-gray-900 uppercase tracking-wider">
-              F?lligkeit
+              Fälligkeit
             </th>
             <th scope="col" className="px-3 py-3 text-left text-xs font-semibold text-gray-900 uppercase tracking-wider">
               Datum A
@@ -105,7 +105,7 @@ export default function DataTable({ rows }: DataTableProps) {
                   checked={selectedRows.has(row.id)}
                   onChange={() => toggleRow(row.id)}
                   className="h-4 w-4 text-blue-600 border-gray-300 rounded focus:ring-blue-600"
-                  aria-label={`Zeile ${row.id} ausw?hlen`}
+                  aria-label={`Zeile ${row.id} auswählen`}
                 />
               </td>
               <td className="px-3 py-2">
