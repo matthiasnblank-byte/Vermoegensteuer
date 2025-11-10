@@ -13,6 +13,9 @@ export default function FinanzanlagenPage() {
   const [isAssetModalOpen, setIsAssetModalOpen] = useState(false);
   const [isSchuldModalOpen, setIsSchuldModalOpen] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState('Börsennotierte Wertpapiere');
+  const [editingAsset, setEditingAsset] = useState<AssetPosition | undefined>(undefined);
+  const [editingSchuld, setEditingSchuld] = useState<SchuldPosition | undefined>(undefined);
+  const [searchQueries, setSearchQueries] = useState<Record<string, string>>({});
 
   useEffect(() => {
     storageService.initMockData();
@@ -21,20 +24,73 @@ export default function FinanzanlagenPage() {
   }, []);
 
   const handleAddAsset = (asset: AssetPosition) => {
-    const updated = [...assets, asset];
+    const existingIndex = assets.findIndex(a => a.id === asset.id);
+    let updated: AssetPosition[];
+    if (existingIndex >= 0) {
+      // Bearbeiten
+      updated = [...assets];
+      updated[existingIndex] = asset;
+    } else {
+      // Hinzufügen
+      updated = [...assets, asset];
+    }
     storageService.saveAssets(updated);
     setAssets(updated);
+    setEditingAsset(undefined);
   };
 
   const handleAddSchuld = (schuld: SchuldPosition) => {
-    const updated = [...schulden, schuld];
+    const existingIndex = schulden.findIndex(s => s.id === schuld.id);
+    let updated: SchuldPosition[];
+    if (existingIndex >= 0) {
+      // Bearbeiten
+      updated = [...schulden];
+      updated[existingIndex] = schuld;
+    } else {
+      // Hinzufügen
+      updated = [...schulden, schuld];
+    }
     storageService.saveSchulden(updated);
     setSchulden(updated);
+    setEditingSchuld(undefined);
   };
 
-  const openAssetModal = (category: string = 'Börsennotierte Wertpapiere') => {
+  const openAssetModal = (category: string = 'Börsennotierte Wertpapiere', asset?: AssetPosition) => {
     setSelectedCategory(category);
+    setEditingAsset(asset);
     setIsAssetModalOpen(true);
+  };
+
+  const openSchuldModal = (schuld?: SchuldPosition) => {
+    setEditingSchuld(schuld);
+    setIsSchuldModalOpen(true);
+  };
+
+  const handleSearch = (category: string, query: string) => {
+    setSearchQueries(prev => ({
+      ...prev,
+      [category]: query,
+    }));
+  };
+
+  const filterAssets = (categoryAssets: AssetPosition[], query: string): AssetPosition[] => {
+    if (!query.trim()) return categoryAssets;
+    const lowerQuery = query.toLowerCase();
+    return categoryAssets.filter(asset =>
+      asset.bezeichnung?.toLowerCase().includes(lowerQuery) ||
+      asset.identifikator?.toLowerCase().includes(lowerQuery) ||
+      asset.quelle?.toLowerCase().includes(lowerQuery)
+    );
+  };
+
+  const filterSchulden = (schuldenList: SchuldPosition[], query: string): SchuldPosition[] => {
+    if (!query.trim()) return schuldenList;
+    const lowerQuery = query.toLowerCase();
+    return schuldenList.filter(schuld =>
+      schuld.glaeubiger?.toLowerCase().includes(lowerQuery) ||
+      schuld.rechtsgrund?.toLowerCase().includes(lowerQuery) ||
+      schuld.besicherung?.toLowerCase().includes(lowerQuery)
+    );
   };
 
   return (
@@ -49,15 +105,23 @@ export default function FinanzanlagenPage() {
 
       <AddAssetModal
         isOpen={isAssetModalOpen}
-        onClose={() => setIsAssetModalOpen(false)}
+        onClose={() => {
+          setIsAssetModalOpen(false);
+          setEditingAsset(undefined);
+        }}
         onSave={handleAddAsset}
         category={selectedCategory}
+        asset={editingAsset}
       />
 
       <AddSchuldModal
         isOpen={isSchuldModalOpen}
-        onClose={() => setIsSchuldModalOpen(false)}
+        onClose={() => {
+          setIsSchuldModalOpen(false);
+          setEditingSchuld(undefined);
+        }}
         onSave={handleAddSchuld}
+        schuld={editingSchuld}
       />
 
       <Tabs
@@ -68,13 +132,17 @@ export default function FinanzanlagenPage() {
             content: (
               <div className="space-y-4">
                 <SearchBar
-                  onSearch={() => {}}
+                  onSearch={(query) => handleSearch('Börsennotierte Wertpapiere', query)}
                   onDateFilter={() => {}}
                 />
                 <AssetCategoryContent
                   category="Börsennotierte Wertpapiere"
-                  assets={assets.filter((a) => a.kategorie === 'Börsennotierte Wertpapiere')}
+                  assets={filterAssets(
+                    assets.filter((a) => a.kategorie === 'Börsennotierte Wertpapiere'),
+                    searchQueries['Börsennotierte Wertpapiere'] || ''
+                  )}
                   onAddClick={() => openAssetModal('Börsennotierte Wertpapiere')}
+                  onEdit={(asset) => openAssetModal(asset.kategorie, asset)}
                 />
               </div>
             ),
@@ -85,13 +153,17 @@ export default function FinanzanlagenPage() {
             content: (
               <div className="space-y-4">
                 <SearchBar
-                  onSearch={() => {}}
+                  onSearch={(query) => handleSearch('Nicht börsennotierte Investmentanteile', query)}
                   onDateFilter={() => {}}
                 />
                 <AssetCategoryContent
                   category="Nicht börsennotierte Investmentanteile"
-                  assets={assets.filter((a) => a.kategorie === 'Nicht börsennotierte Investmentanteile')}
+                  assets={filterAssets(
+                    assets.filter((a) => a.kategorie === 'Nicht börsennotierte Investmentanteile'),
+                    searchQueries['Nicht börsennotierte Investmentanteile'] || ''
+                  )}
                   onAddClick={() => openAssetModal('Nicht börsennotierte Investmentanteile')}
+                  onEdit={(asset) => openAssetModal(asset.kategorie, asset)}
                 />
               </div>
             ),
@@ -102,13 +174,17 @@ export default function FinanzanlagenPage() {
             content: (
               <div className="space-y-4">
                 <SearchBar
-                  onSearch={() => {}}
+                  onSearch={(query) => handleSearch('Kapitalforderungen', query)}
                   onDateFilter={() => {}}
                 />
                 <AssetCategoryContent
                   category="Kapitalforderungen"
-                  assets={assets.filter((a) => a.kategorie === 'Kapitalforderungen')}
+                  assets={filterAssets(
+                    assets.filter((a) => a.kategorie === 'Kapitalforderungen'),
+                    searchQueries['Kapitalforderungen'] || ''
+                  )}
                   onAddClick={() => openAssetModal('Kapitalforderungen')}
+                  onEdit={(asset) => openAssetModal(asset.kategorie, asset)}
                 />
               </div>
             ),
@@ -119,13 +195,17 @@ export default function FinanzanlagenPage() {
             content: (
               <div className="space-y-4">
                 <SearchBar
-                  onSearch={() => {}}
+                  onSearch={(query) => handleSearch('Sonstige Finanzinstrumente', query)}
                   onDateFilter={() => {}}
                 />
                 <AssetCategoryContent
                   category="Sonstige Finanzinstrumente"
-                  assets={assets.filter((a) => a.kategorie === 'Sonstige Finanzinstrumente')}
+                  assets={filterAssets(
+                    assets.filter((a) => a.kategorie === 'Sonstige Finanzinstrumente'),
+                    searchQueries['Sonstige Finanzinstrumente'] || ''
+                  )}
                   onAddClick={() => openAssetModal('Sonstige Finanzinstrumente')}
+                  onEdit={(asset) => openAssetModal(asset.kategorie, asset)}
                 />
               </div>
             ),
@@ -137,15 +217,18 @@ export default function FinanzanlagenPage() {
               <div className="space-y-4">
                 <div className="flex items-center justify-between">
                   <SearchBar
-                    onSearch={() => {}}
+                    onSearch={(query) => handleSearch('Schulden', query)}
                     onDateFilter={() => {}}
                   />
-                  <Button variant="primary" onClick={() => setIsSchuldModalOpen(true)}>
+                  <Button variant="primary" onClick={() => openSchuldModal()}>
                     <PlusIcon className="h-4 w-4" aria-hidden="true" />
                     Schuld hinzufügen
                   </Button>
                 </div>
-                <SchuldenContent schulden={schulden} />
+                <SchuldenContent
+                  schulden={filterSchulden(schulden, searchQueries['Schulden'] || '')}
+                  onEdit={(schuld) => openSchuldModal(schuld)}
+                />
               </div>
             ),
           },
@@ -267,9 +350,10 @@ interface AssetCategoryContentProps {
   category: string;
   assets: AssetPosition[];
   onAddClick: () => void;
+  onEdit: (asset: AssetPosition) => void;
 }
 
-function AssetCategoryContent({ category, assets, onAddClick }: AssetCategoryContentProps) {
+function AssetCategoryContent({ category, assets, onAddClick, onEdit }: AssetCategoryContentProps) {
   if (assets.length === 0) {
     return (
       <div className="py-8 text-center">
@@ -321,7 +405,7 @@ function AssetCategoryContent({ category, assets, onAddClick }: AssetCategoryCon
                 <td className="px-4 py-3 text-sm text-gray-500 dark:text-gray-400">{asset.quelle || '-'}</td>
                 <td className="px-4 py-3">
                   <div className="flex items-center gap-2">
-                    <Button variant="secondary" onClick={() => {}} className="text-xs py-1 px-2">
+                    <Button variant="secondary" onClick={() => onEdit(asset)} className="text-xs py-1 px-2">
                       Bearbeiten
                     </Button>
                     <Button variant="secondary" onClick={() => {}} className="text-xs py-1 px-2">
@@ -340,9 +424,10 @@ function AssetCategoryContent({ category, assets, onAddClick }: AssetCategoryCon
 
 interface SchuldenContentProps {
   schulden: SchuldPosition[];
+  onEdit: (schuld: SchuldPosition) => void;
 }
 
-function SchuldenContent({ schulden }: SchuldenContentProps) {
+function SchuldenContent({ schulden, onEdit }: SchuldenContentProps) {
   if (schulden.length === 0) {
     return (
       <div className="py-8 text-center">
@@ -386,7 +471,7 @@ function SchuldenContent({ schulden }: SchuldenContentProps) {
                 </td>
                 <td className="px-4 py-3 text-sm text-gray-500 dark:text-gray-400">{schuld.zinssatz ? `${schuld.zinssatz}%` : '-'}</td>
                 <td className="px-4 py-3">
-                  <Button variant="secondary" onClick={() => {}} className="text-xs py-1 px-2">
+                  <Button variant="secondary" onClick={() => onEdit(schuld)} className="text-xs py-1 px-2">
                     Bearbeiten
                   </Button>
                 </td>

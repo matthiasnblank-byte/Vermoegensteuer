@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Modal from './Modal';
 import Button from './Button';
 import { SchuldPosition } from '../services/storageService';
@@ -7,9 +7,10 @@ interface AddSchuldModalProps {
   isOpen: boolean;
   onClose: () => void;
   onSave: (schuld: SchuldPosition) => void;
+  schuld?: SchuldPosition;
 }
 
-export default function AddSchuldModal({ isOpen, onClose, onSave }: AddSchuldModalProps) {
+export default function AddSchuldModal({ isOpen, onClose, onSave, schuld }: AddSchuldModalProps) {
   const [formData, setFormData] = useState<Partial<SchuldPosition>>({
     glaeubiger: '',
     rechtsgrund: '',
@@ -19,6 +20,28 @@ export default function AddSchuldModal({ isOpen, onClose, onSave }: AddSchuldMod
     besicherung: '',
   });
 
+  useEffect(() => {
+    if (schuld) {
+      setFormData({
+        glaeubiger: schuld.glaeubiger,
+        rechtsgrund: schuld.rechtsgrund,
+        nennbetrag: schuld.nennbetrag,
+        faelligkeit: schuld.faelligkeit || '',
+        zinssatz: schuld.zinssatz,
+        besicherung: schuld.besicherung || '',
+      });
+    } else {
+      setFormData({
+        glaeubiger: '',
+        rechtsgrund: '',
+        nennbetrag: 0,
+        faelligkeit: '',
+        zinssatz: undefined,
+        besicherung: '',
+      });
+    }
+  }, [schuld, isOpen]);
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     
@@ -27,8 +50,8 @@ export default function AddSchuldModal({ isOpen, onClose, onSave }: AddSchuldMod
       return;
     }
 
-    const newSchuld: SchuldPosition = {
-      id: `schuld-${Date.now()}`,
+    const updatedSchuld: SchuldPosition = {
+      id: schuld?.id || `schuld-${Date.now()}`,
       glaeubiger: formData.glaeubiger,
       rechtsgrund: formData.rechtsgrund,
       nennbetrag: Number(formData.nennbetrag),
@@ -37,15 +60,17 @@ export default function AddSchuldModal({ isOpen, onClose, onSave }: AddSchuldMod
       besicherung: formData.besicherung || undefined,
     };
 
-    onSave(newSchuld);
-    setFormData({
-      glaeubiger: '',
-      rechtsgrund: '',
-      nennbetrag: 0,
-      faelligkeit: '',
-      zinssatz: undefined,
-      besicherung: '',
-    });
+    onSave(updatedSchuld);
+    if (!schuld) {
+      setFormData({
+        glaeubiger: '',
+        rechtsgrund: '',
+        nennbetrag: 0,
+        faelligkeit: '',
+        zinssatz: undefined,
+        besicherung: '',
+      });
+    }
     onClose();
   };
 
@@ -158,7 +183,7 @@ export default function AddSchuldModal({ isOpen, onClose, onSave }: AddSchuldMod
             Abbrechen
           </Button>
           <Button variant="primary" type="submit">
-            Schuld hinzufügen
+            {schuld ? 'Änderungen speichern' : 'Schuld hinzufügen'}
           </Button>
         </div>
       </form>
