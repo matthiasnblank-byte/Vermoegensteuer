@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Modal from './Modal';
 import Button from './Button';
 import { AssetPosition } from '../services/storageService';
@@ -8,9 +8,10 @@ interface AddAssetModalProps {
   onClose: () => void;
   onSave: (asset: AssetPosition) => void;
   category: string;
+  asset?: AssetPosition;
 }
 
-export default function AddAssetModal({ isOpen, onClose, onSave, category }: AddAssetModalProps) {
+export default function AddAssetModal({ isOpen, onClose, onSave, category, asset }: AddAssetModalProps) {
   const [formData, setFormData] = useState<Partial<AssetPosition>>({
     kategorie: category,
     bezeichnung: '',
@@ -22,6 +23,32 @@ export default function AddAssetModal({ isOpen, onClose, onSave, category }: Add
     quelle: '',
   });
 
+  useEffect(() => {
+    if (asset) {
+      setFormData({
+        kategorie: asset.kategorie,
+        bezeichnung: asset.bezeichnung,
+        identifikator: asset.identifikator,
+        menge: asset.menge,
+        einheitswert: asset.einheitswert,
+        bewertungsmethode: asset.bewertungsmethode,
+        kursdatum: asset.kursdatum,
+        quelle: asset.quelle,
+      });
+    } else {
+      setFormData({
+        kategorie: category,
+        bezeichnung: '',
+        identifikator: '',
+        menge: 1,
+        einheitswert: 0,
+        bewertungsmethode: '§ 11 BewG',
+        kursdatum: new Date().toISOString().split('T')[0],
+        quelle: '',
+      });
+    }
+  }, [asset, category, isOpen]);
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     
@@ -30,8 +57,8 @@ export default function AddAssetModal({ isOpen, onClose, onSave, category }: Add
       return;
     }
 
-    const newAsset: AssetPosition = {
-      id: `asset-${Date.now()}`,
+    const updatedAsset: AssetPosition = {
+      id: asset?.id || `asset-${Date.now()}`,
       kategorie: formData.kategorie || category,
       bezeichnung: formData.bezeichnung,
       identifikator: formData.identifikator,
@@ -43,17 +70,19 @@ export default function AddAssetModal({ isOpen, onClose, onSave, category }: Add
       quelle: formData.quelle,
     };
 
-    onSave(newAsset);
-    setFormData({
-      kategorie: category,
-      bezeichnung: '',
-      identifikator: '',
-      menge: 1,
-      einheitswert: 0,
-      bewertungsmethode: '§ 11 BewG',
-      kursdatum: new Date().toISOString().split('T')[0],
-      quelle: '',
-    });
+    onSave(updatedAsset);
+    if (!asset) {
+      setFormData({
+        kategorie: category,
+        bezeichnung: '',
+        identifikator: '',
+        menge: 1,
+        einheitswert: 0,
+        bewertungsmethode: '§ 11 BewG',
+        kursdatum: new Date().toISOString().split('T')[0],
+        quelle: '',
+      });
+    }
     onClose();
   };
 
@@ -198,7 +227,7 @@ export default function AddAssetModal({ isOpen, onClose, onSave, category }: Add
             Abbrechen
           </Button>
           <Button variant="primary" type="submit">
-            Position hinzufügen
+            {asset ? 'Änderungen speichern' : 'Position hinzufügen'}
           </Button>
         </div>
       </form>
