@@ -108,6 +108,7 @@ export default function FinanzanlagenPage() {
         isOpen={isAssetDialogOpen}
         onClose={() => setIsAssetDialogOpen(false)}
         onSave={handleSaveAsset}
+        onDelete={handleDeleteAsset}
         asset={editingAsset}
         kategorie={currentKategorie}
       />
@@ -116,6 +117,7 @@ export default function FinanzanlagenPage() {
         isOpen={isSchuldDialogOpen}
         onClose={() => setIsSchuldDialogOpen(false)}
         onSave={handleSaveSchuld}
+        onDelete={handleDeleteSchuld}
         schuld={editingSchuld}
       />
 

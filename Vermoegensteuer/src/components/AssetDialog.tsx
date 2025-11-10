@@ -1,6 +1,6 @@
 import { Fragment, useState, useEffect } from 'react';
 import { Dialog, Transition } from '@headlessui/react';
-import { XMarkIcon } from '@heroicons/react/24/outline';
+import { XMarkIcon, TrashIcon } from '@heroicons/react/24/outline';
 import { AssetPosition } from '../services/storageService';
 import Button from './Button';
 
@@ -8,11 +8,12 @@ interface AssetDialogProps {
   isOpen: boolean;
   onClose: () => void;
   onSave: (asset: AssetPosition) => void;
+  onDelete?: (id: string) => void;
   asset?: AssetPosition;
   kategorie: string;
 }
 
-export default function AssetDialog({ isOpen, onClose, onSave, asset, kategorie }: AssetDialogProps) {
+export default function AssetDialog({ isOpen, onClose, onSave, onDelete, asset, kategorie }: AssetDialogProps) {
   const [formData, setFormData] = useState<Partial<AssetPosition>>({
     kategorie: kategorie,
     identifikator: '',
@@ -82,6 +83,33 @@ export default function AssetDialog({ isOpen, onClose, onSave, asset, kategorie 
     onClose();
   };
 
+  const handleDelete = () => {
+    if (asset && onDelete) {
+      if (window.confirm('Möchten Sie diese Position wirklich löschen?')) {
+        onDelete(asset.id);
+        onClose();
+      }
+    }
+  };
+
+  // Bestimme das Label für das Identifikator-Feld basierend auf der Kategorie
+  const getIdentifikatorLabel = () => {
+    const kat = formData.kategorie || kategorie;
+    if (kat === 'Börsennotierte Wertpapiere' || kat === 'Nicht börsennotierte Investmentanteile') {
+      return 'ISIN/WKN';
+    } else if (kat === 'Kapitalforderungen') {
+      return 'Kontonummer/IBAN';
+    } else {
+      return 'Identifikator (optional)';
+    }
+  };
+
+  // Bestimme ob das Identifikator-Feld optional ist
+  const isIdentifikatorOptional = () => {
+    const kat = formData.kategorie || kategorie;
+    return kat === 'Sonstige Finanzinstrumente';
+  };
+
   return (
     <Transition appear show={isOpen} as={Fragment}>
       <Dialog as="div" className="relative z-50" onClose={onClose}>
@@ -131,12 +159,15 @@ export default function AssetDialog({ isOpen, onClose, onSave, asset, kategorie 
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                       <div>
                         <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                          ISIN/WKN
+                          {getIdentifikatorLabel()}
+                          {!isIdentifikatorOptional() && <span className="text-red-500">*</span>}
                         </label>
                         <input
                           type="text"
+                          required={!isIdentifikatorOptional()}
                           value={formData.identifikator || ''}
                           onChange={(e) => handleChange('identifikator', e.target.value)}
+                          placeholder={formData.kategorie === 'Kapitalforderungen' ? 'z.B. DE89 3704 0044 0532 0130 00' : formData.kategorie === 'Sonstige Finanzinstrumente' ? 'z.B. Wallet-Adresse oder Ticker' : 'z.B. DE0005140008'}
                           className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-blue-600 text-sm"
                         />
                       </div>
@@ -258,13 +289,28 @@ export default function AssetDialog({ isOpen, onClose, onSave, asset, kategorie 
                     </div>
                   </div>
 
-                  <div className="mt-6 flex justify-end gap-3">
-                    <Button variant="secondary" onClick={onClose} type="button">
-                      Abbrechen
-                    </Button>
-                    <Button variant="primary" type="submit">
-                      {asset ? 'Speichern' : 'Hinzufügen'}
-                    </Button>
+                  <div className="mt-6 flex justify-between gap-3">
+                    <div>
+                      {asset && onDelete && (
+                        <Button 
+                          variant="secondary" 
+                          onClick={handleDelete} 
+                          type="button"
+                          className="text-red-600 hover:text-red-700 dark:text-red-400 dark:hover:text-red-300 border-red-300 dark:border-red-600 hover:bg-red-50 dark:hover:bg-red-900/30"
+                        >
+                          <TrashIcon className="h-4 w-4" aria-hidden="true" />
+                          Löschen
+                        </Button>
+                      )}
+                    </div>
+                    <div className="flex gap-3">
+                      <Button variant="secondary" onClick={onClose} type="button">
+                        Abbrechen
+                      </Button>
+                      <Button variant="primary" type="submit">
+                        {asset ? 'Speichern' : 'Hinzufügen'}
+                      </Button>
+                    </div>
                   </div>
                 </form>
               </Dialog.Panel>
