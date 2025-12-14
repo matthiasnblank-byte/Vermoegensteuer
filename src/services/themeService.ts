@@ -12,7 +12,7 @@ class ThemeService {
   init(): void {
     this.applyTheme();
     
-    // Listener für Systempr?ferenz-Änderungen
+    // Listener für Systempräferenz-Änderungen
     if (typeof window !== 'undefined') {
       this.mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
       this.mediaQuery.addEventListener('change', this.handleSystemPreferenceChange);

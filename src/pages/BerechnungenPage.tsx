@@ -48,7 +48,7 @@ export default function BerechnungenPage() {
       const gesamtschulden = schulden.reduce((sum, schuld) => sum + schuld.nennbetrag, 0);
       
       // 3. Reinvermögen berechnen (Vermögen - Schulden)
-      const reinvermoegen = gesamtvermoegen - gesamtschulden;
+      const reinvermoegen = Math.max(0, gesamtvermoegen - gesamtschulden);
       
       // 4. Freibetrag (in Deutschland aktuell diskutiert: 1 Mio. EUR für Privatpersonen)
       // Hinweis: Dies ist ein fiktiver Wert, da es in Deutschland aktuell keine Vermögensteuer gibt

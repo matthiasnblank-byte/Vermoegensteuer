@@ -51,6 +51,49 @@ export interface SchuldPosition {
   besicherung?: string;
 }
 
+/**
+ * Repariert häufige Zeichenkodierungs-Probleme (z.B. "MÃ¼ller" -> "Müller").
+ * Hintergrund: In einigen Umgebungen können UTF-8-Bytes fälschlich als Latin-1
+ * interpretiert werden; das Ergebnis landet dann als Mojibake in localStorage.
+ */
+function repairMojibakeString(input: string): string {
+  if (!/[ÃÂâ€Ð]/.test(input)) return input;
+  if (typeof TextDecoder === 'undefined') return input;
+  try {
+    const bytes = Uint8Array.from(input, (ch) => ch.charCodeAt(0) & 0xff);
+    const decoded = new TextDecoder('utf-8', { fatal: false }).decode(bytes);
+    const markerCount = (s: string) => (s.match(/[ÃÂâ€Ð]/g) || []).length;
+    const replacementCount = (s: string) => (s.match(/\uFFFD/g) || []).length;
+    if (
+      decoded &&
+      markerCount(decoded) < markerCount(input) &&
+      replacementCount(decoded) <= replacementCount(input)
+    ) {
+      return decoded.normalize('NFC');
+    }
+  } catch {
+    // Ignorieren: wir geben den Originalwert zurück.
+  }
+  return input;
+}
+
+function repairMojibakeDeep<T>(value: T): T {
+  if (typeof value === 'string') return repairMojibakeString(value) as T;
+  if (Array.isArray(value)) return value.map(repairMojibakeDeep) as T;
+  if (value && typeof value === 'object') {
+    const obj = value as Record<string, unknown>;
+    let changed = false;
+    const out: Record<string, unknown> = {};
+    for (const [k, v] of Object.entries(obj)) {
+      const repaired = repairMojibakeDeep(v);
+      out[k] = repaired;
+      changed ||= repaired !== v;
+    }
+    return (changed ? out : value) as T;
+  }
+  return value;
+}
+
 class StorageService {
   private readonly CASE_KEY = 'b2b_dashboard_case';
   private readonly ASSETS_KEY = 'b2b_dashboard_assets';
@@ -58,7 +101,13 @@ class StorageService {
 
   getCase(): CaseData | null {
     const data = localStorage.getItem(this.CASE_KEY);
-    return data ? JSON.parse(data) : null;
+    if (!data) return null;
+    const parsed = JSON.parse(data) as CaseData;
+    const repaired = repairMojibakeDeep(parsed);
+    if (repaired !== parsed) {
+      localStorage.setItem(this.CASE_KEY, JSON.stringify(repaired));
+    }
+    return repaired;
   }
 
   saveCase(caseData: CaseData): void {
@@ -67,7 +116,13 @@ class StorageService {
 
   getAssets(): AssetPosition[] {
     const data = localStorage.getItem(this.ASSETS_KEY);
-    return data ? JSON.parse(data) : [];
+    if (!data) return [];
+    const parsed = JSON.parse(data) as AssetPosition[];
+    const repaired = repairMojibakeDeep(parsed);
+    if (repaired !== parsed) {
+      localStorage.setItem(this.ASSETS_KEY, JSON.stringify(repaired));
+    }
+    return repaired;
   }
 
   saveAssets(assets: AssetPosition[]): void {
@@ -76,7 +131,13 @@ class StorageService {
 
   getSchulden(): SchuldPosition[] {
     const data = localStorage.getItem(this.SCHULDEN_KEY);
-    return data ? JSON.parse(data) : [];
+    if (!data) return [];
+    const parsed = JSON.parse(data) as SchuldPosition[];
+    const repaired = repairMojibakeDeep(parsed);
+    if (repaired !== parsed) {
+      localStorage.setItem(this.SCHULDEN_KEY, JSON.stringify(repaired));
+    }
+    return repaired;
   }
 
   saveSchulden(schulden: SchuldPosition[]): void {
@@ -84,6 +145,22 @@ class StorageService {
   }
 
   initMockData(): void {
+    // Falls Demo-Daten früher mit falscher Kodierung gespeichert wurden, kann das U+FFFD ("�")
+    // enthalten. Das lässt sich nicht zuverlässig "reparieren" – daher setzen wir in diesem
+    // klaren Demo-Fall die Seed-Daten einmalig zurück.
+    const existing = this.getCase();
+    if (existing?.id === 'case-1') {
+      const hasReplacementChar = (val: unknown): boolean => {
+        if (typeof val === 'string') return val.includes('\uFFFD');
+        if (Array.isArray(val)) return val.some(hasReplacementChar);
+        if (val && typeof val === 'object') return Object.values(val as Record<string, unknown>).some(hasReplacementChar);
+        return false;
+      };
+      if (hasReplacementChar(existing)) {
+        localStorage.removeItem(this.CASE_KEY);
+      }
+    }
+
     if (!this.getCase()) {
       this.saveCase({
         id: 'case-1',

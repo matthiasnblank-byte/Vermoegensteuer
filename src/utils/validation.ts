@@ -1,6 +1,6 @@
 /**
  * Validierungs-Hilfsfunktionen mit vollständiger Unicode-Unterstützung
- * für deutsche Umlaute (?, ?, ?, ?, ?, ?, ?) und andere diakritische Zeichen
+ * für deutsche Umlaute (ä, ö, ü, Ä, Ö, Ü, ß) und andere diakritische Zeichen
  */
 
 /**
@@ -17,7 +17,7 @@ export const NAME_PATTERN = /^[\p{L}\p{Zs}\-']+$/u;
 
 /**
  * Normalisiert einen String zu NFC (Canonical Composition)
- * Dies stellt sicher, dass zusammengesetzte Zeichen (z.B. ? = a + ?) als ein Zeichen behandelt werden
+ * Dies stellt sicher, dass zusammengesetzte Zeichen (z.B. ä = a + ¨) als ein Zeichen behandelt werden
  */
 export function normalizeString(str: string): string {
   return str.normalize('NFC');

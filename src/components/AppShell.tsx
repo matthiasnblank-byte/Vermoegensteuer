@@ -1,4 +1,4 @@
-import { ReactNode } from 'react';
+import { ReactNode, useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
 import SidebarNav from './SidebarNav';
 import Breadcrumbs from './Breadcrumbs';
@@ -11,6 +11,9 @@ interface AppShellProps {
 
 export default function AppShell({ children }: AppShellProps) {
   const location = useLocation();
+  useEffect(() => {
+    storageService.initMockData();
+  }, []);
   const caseData = storageService.getCase();
 
   const getBreadcrumbs = () => {

@@ -3,6 +3,7 @@ import { NavLink } from 'react-router-dom';
 import { 
   DocumentTextIcon, 
   CurrencyDollarIcon,
+  CalculatorIcon,
   Cog6ToothIcon,
   Bars3Icon,
   XMarkIcon
@@ -19,6 +20,7 @@ interface NavItem {
 const navigation: NavItem[] = [
   { name: 'Stammdaten', path: '/stammdaten', icon: DocumentTextIcon },
   { name: 'Finanzanlagen', path: '/finanzanlagen', icon: CurrencyDollarIcon },
+  { name: 'Berechnungen', path: '/berechnungen', icon: CalculatorIcon },
 ];
 
 export default function SidebarNav() {
