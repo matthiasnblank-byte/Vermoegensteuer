@@ -2,7 +2,7 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Design Tokens f?r Light Mode */
+/* Design Tokens für Light Mode */
 :root {
   --bg: #ffffff;
   --fg: #111111;
@@ -27,7 +27,7 @@
   --header-border: #e5e7eb;
 }
 
-/* Dark Mode via Systempr?ferenz */
+/* Dark Mode via Systempräferenz */
 @media (prefers-color-scheme: dark) {
   :root {
     --bg: #0b0f14;
@@ -169,7 +169,7 @@ body {
   transition: background-color 100ms ease, color 100ms ease;
 }
 
-/* Globale Utility-Klassen f?r Theme-Variablen */
+/* Globale Utility-Klassen für Theme-Variablen */
 .bg-surface {
   background-color: var(--surface);
 }
