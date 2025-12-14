@@ -2,7 +2,7 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Design Tokens f?r Light Mode */
+/* Design Tokens für Light Mode */
 :root {
   --bg: #ffffff;
   --fg: #111111;
@@ -27,7 +27,7 @@
   --header-border: #e5e7eb;
 }
 
-/* Dark Mode via Systempr?ferenz */
+/* Dark Mode via Systempräferenz */
 @media (prefers-color-scheme: dark) {
   :root {
     --bg: #0b0f14;
@@ -104,12 +104,58 @@ html[data-theme="dark"] {
   --header-border: #253041;
 }
 
-/* Respect reduced motion */
+/* Respect reduced motion (WCAG 2.3.3) */
 @media (prefers-reduced-motion: reduce) {
-  * {
+  *,
+  *::before,
+  *::after {
     animation-duration: 0.01ms !important;
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* Verbesserte Fokus-Indikatoren (WCAG 2.4.7) */
+:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+/* Skip-Link Styles */
+.skip-link {
+  position: absolute;
+  top: -40px;
+  left: 0;
+  background: var(--accent);
+  color: white;
+  padding: 8px 16px;
+  z-index: 100;
+  text-decoration: none;
+  font-weight: 500;
+  border-radius: 0 0 4px 0;
+  transition: top 0.2s ease;
+}
+
+.skip-link:focus {
+  top: 0;
+}
+
+/* Hochkontrast-Modus Unterstützung */
+@media (forced-colors: active) {
+  .focus\:ring-2:focus {
+    outline: 2px solid CanvasText !important;
+  }
+  
+  button,
+  [role="button"] {
+    border: 1px solid ButtonText;
+  }
+  
+  button:focus,
+  [role="button"]:focus {
+    outline: 2px solid Highlight;
+    outline-offset: 2px;
   }
 }
 
@@ -123,7 +169,7 @@ body {
   transition: background-color 100ms ease, color 100ms ease;
 }
 
-/* Globale Utility-Klassen f?r Theme-Variablen */
+/* Globale Utility-Klassen für Theme-Variablen */
 .bg-surface {
   background-color: var(--surface);
 }

@@ -13,9 +13,9 @@ describe('Breadcrumbs Component', () => {
   });
 
   it('rendert leere Breadcrumbs ohne Fehler', () => {
-    render(<Breadcrumbs items={[]} />);
-    const nav = screen.getByRole('navigation', { name: /breadcrumb/i });
-    expect(nav).toBeInTheDocument();
+    const { container } = render(<Breadcrumbs items={[]} />);
+    // Bei leeren Items wird nichts gerendert
+    expect(container.firstChild).toBeNull();
   });
 
   it('hebt das letzte Item hervor', () => {
