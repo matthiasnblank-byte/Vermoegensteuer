@@ -1,4 +1,4 @@
-import { ReactNode } from 'react';
+import { ReactNode, useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
 import SidebarNav from './SidebarNav';
 import Breadcrumbs from './Breadcrumbs';
@@ -11,6 +11,9 @@ interface AppShellProps {
 
 export default function AppShell({ children }: AppShellProps) {
   const location = useLocation();
+  useEffect(() => {
+    storageService.initMockData();
+  }, []);
   const caseData = storageService.getCase();
 
   const getBreadcrumbs = () => {
@@ -26,6 +29,13 @@ export default function AppShell({ children }: AppShellProps) {
         caseData?.organisation || 'Organisation',
         caseData?.bereich || 'Bereich',
         'Finanzanlagen',
+      ];
+    }
+    if (location.pathname === '/berechnungen') {
+      return [
+        caseData?.organisation || 'Organisation',
+        caseData?.bereich || 'Bereich',
+        'Berechnungen',
       ];
     }
     if (location.pathname === '/einstellungen') {
