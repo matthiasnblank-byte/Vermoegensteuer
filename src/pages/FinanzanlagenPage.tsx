@@ -6,6 +6,8 @@ import Button from '../components/Button';
 import AddAssetModal from '../components/AddAssetModal';
 import AddSchuldModal from '../components/AddSchuldModal';
 import { PlusIcon, TrashIcon, PencilIcon } from '@heroicons/react/24/outline';
+import AssetAllocationChart from '../components/AssetAllocationChart';
+import NetWorthChart from '../components/NetWorthChart';
 
 export default function FinanzanlagenPage() {
   const [assets, setAssets] = useState<AssetPosition[]>([]);
@@ -151,7 +153,7 @@ export default function FinanzanlagenPage() {
               <div className="space-y-4">
                 <SearchBar
                   onSearch={(query) => handleSearch('Börsennotierte Wertpapiere', query)}
-                  onDateFilter={() => {}}
+                  onDateFilter={() => { }}
                 />
                 <AssetCategoryContent
                   category="Börsennotierte Wertpapiere"
@@ -173,7 +175,7 @@ export default function FinanzanlagenPage() {
               <div className="space-y-4">
                 <SearchBar
                   onSearch={(query) => handleSearch('Nicht börsennotierte Investmentanteile', query)}
-                  onDateFilter={() => {}}
+                  onDateFilter={() => { }}
                 />
                 <AssetCategoryContent
                   category="Nicht börsennotierte Investmentanteile"
@@ -195,7 +197,7 @@ export default function FinanzanlagenPage() {
               <div className="space-y-4">
                 <SearchBar
                   onSearch={(query) => handleSearch('Kapitalforderungen', query)}
-                  onDateFilter={() => {}}
+                  onDateFilter={() => { }}
                 />
                 <AssetCategoryContent
                   category="Kapitalforderungen"
@@ -217,7 +219,7 @@ export default function FinanzanlagenPage() {
               <div className="space-y-4">
                 <SearchBar
                   onSearch={(query) => handleSearch('Sonstige Finanzinstrumente', query)}
-                  onDateFilter={() => {}}
+                  onDateFilter={() => { }}
                 />
                 <AssetCategoryContent
                   category="Sonstige Finanzinstrumente"
@@ -240,7 +242,7 @@ export default function FinanzanlagenPage() {
                 <div className="flex items-center justify-between">
                   <SearchBar
                     onSearch={(query) => handleSearch('Schulden', query)}
-                    onDateFilter={() => {}}
+                    onDateFilter={() => { }}
                   />
                   <Button variant="primary" onClick={() => openSchuldModal()}>
                     <PlusIcon className="h-4 w-4" aria-hidden="true" />
@@ -263,7 +265,7 @@ export default function FinanzanlagenPage() {
           <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-100">Summenspiegel</h2>
           <span className="text-sm text-gray-500 dark:text-gray-400">Stand: {new Date().toLocaleDateString('de-DE')}</span>
         </div>
-        
+
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           {/* Vermögen brutto */}
           <div className="relative overflow-hidden rounded-xl bg-gradient-to-br from-green-50 to-green-100 dark:from-green-900/30 dark:to-green-800/20 p-6 shadow-md hover:shadow-lg transition-shadow duration-200">
@@ -286,7 +288,7 @@ export default function FinanzanlagenPage() {
               </div>
               <div className="absolute -right-4 -bottom-4 opacity-10 dark:opacity-5">
                 <svg className="h-32 w-32 text-green-600" fill="currentColor" viewBox="0 0 24 24">
-                  <path d="M12 2L2 7v10c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V7l-10-5zm0 18c-3.86-.95-7-5.35-7-10V8.64l7-3.82 7 3.82V10c0 4.65-3.14 9.05-7 10z"/>
+                  <path d="M12 2L2 7v10c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V7l-10-5zm0 18c-3.86-.95-7-5.35-7-10V8.64l7-3.82 7 3.82V10c0 4.65-3.14 9.05-7 10z" />
                 </svg>
               </div>
             </div>
@@ -313,7 +315,7 @@ export default function FinanzanlagenPage() {
               </div>
               <div className="absolute -right-4 -bottom-4 opacity-10 dark:opacity-5">
                 <svg className="h-32 w-32 text-red-600" fill="currentColor" viewBox="0 0 24 24">
-                  <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/>
+                  <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z" />
                 </svg>
               </div>
             </div>
@@ -341,10 +343,26 @@ export default function FinanzanlagenPage() {
               </div>
               <div className="absolute -right-4 -bottom-4 opacity-10 dark:opacity-5">
                 <svg className="h-32 w-32 text-blue-600" fill="currentColor" viewBox="0 0 24 24">
-                  <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
+                  <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z" />
                 </svg>
               </div>
             </div>
+          </div>
+        </div>
+
+        {/* Visualisierungen */}
+        <div className="mt-8">
+          <div className="mb-6">
+            <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-2">
+              Vermögensanalyse
+            </h2>
+            <p className="text-sm text-gray-600 dark:text-gray-400">
+              Interaktive Visualisierungen zur besseren Übersicht Ihrer Finanzanlagen
+            </p>
+          </div>
+          <div className="grid grid-cols-1 xl:grid-cols-2 gap-8">
+            <AssetAllocationChart assets={assets} />
+            <NetWorthChart assets={assets} schulden={schulden} />
           </div>
         </div>
 
